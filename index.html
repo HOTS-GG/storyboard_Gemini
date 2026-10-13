@@ -294,6 +294,10 @@ const ICON = {
   track: frame(`${person(20,17,.38)}${cam(20,31)}${arrow(26,31,42,31)}${arrow(26,17,40,17,1.2)}`),
   crane: frame(`${person(32,23,.28)}${cam(10,26,-20)}${arrow(12,24,26,6)}`),
   orbit: frame(`${person(24,17,.36)}<ellipse cx="24" cy="27" rx="17" ry="5" fill="none" stroke="var(--accent)" stroke-width="1.6"/>${arrow(36,31,30,32.3,1.6)}`),
+  zoomin: frame(`${person(32,19,.4)}${cam(8,18)}<circle cx="18" cy="8" r="4.5" fill="none" stroke="var(--accent)" stroke-width="1.5"/><line x1="16" y1="8" x2="20" y2="8" stroke="var(--accent)" stroke-width="1.5"/><line x1="18" y1="6" x2="18" y2="10" stroke="var(--accent)" stroke-width="1.5"/>`),
+  dollyzoom: frame(`${person(24,19,.4)}<line x1="12" y1="4" x2="12" y2="32" stroke="currentColor" opacity=".35"/><line x1="36" y1="4" x2="36" y2="32" stroke="currentColor" opacity=".35"/>${arrow(10,10,4,10,1.4)}${arrow(38,10,44,10,1.4)}${arrow(24,34,24,29,1.2)}`),
+  whip: frame(`${person(30,17,.36,.35)}<g stroke="currentColor" opacity=".45" stroke-width="1.2" stroke-linecap="round"><line x1="6" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="22" y2="18"/><line x1="8" y1="24" x2="20" y2="24"/></g>${arrow(6,31,43,31,2.2)}`),
+  fpv: frame(`<path d="M6,32 Q12,14 24,16 T42,6" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="2 2"/>${arrow(37,9,42,6,1.6)}<g fill="var(--accent)"><rect x="3" y="27" width="8" height="2" rx="1"/><circle cx="3.5" cy="26.5" r="2"/><circle cx="10.5" cy="26.5" r="2"/></g><rect x="20" y="4" width="10" height="8" fill="none" stroke="currentColor" opacity=".35"/>`),
   handheld: frame(`${person(24,17,.36,.5)}<path d="M6,30 q4,-5 8,0 t8,0 t8,0 t8,0 t4,-2" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/>`)
 };
 
@@ -316,16 +320,35 @@ const ANGLES = [
   {id:'pov',ko:'인물의 눈으로',hint:'인물이 보는 장면',term:'시점 샷 (POV)',en:"point-of-view shot, seeing through the main character's eyes",kp:'주인공의 눈으로 보는 시점 샷(POV)'}
 ];
 const MOVES = [
-  {id:'static',ko:'멈춤',hint:'카메라 고정',term:'고정 샷',en:'Static camera with no camera movement',kp:'카메라는 움직이지 않고 고정'},
-  {id:'pushin',ko:'다가가기',hint:'집중·감정 강조',term:'돌리 인 / 줌 인',en:'The camera slowly moves in toward the subject (dolly in)',kp:'카메라가 인물에게 천천히 다가감(돌리 인)'},
-  {id:'pullout',ko:'멀어지기',hint:'주변이 드러남',term:'돌리 아웃 / 줌 아웃',en:'The camera slowly pulls back, revealing the surroundings (dolly out)',kp:'카메라가 천천히 뒤로 물러나며 주변을 드러냄(돌리 아웃)'},
+  {id:'static',ko:'멈춤',hint:'카메라 고정',term:'고정 샷',en:'Static camera with no camera movement',kp:'카메라는 움직이지 않고 고정',noSpeed:true},
+  {id:'pushin',ko:'다가가기',hint:'집중·감정 강조',term:'돌리 인',en:'The camera physically moves in toward the subject (dolly in)',kp:'카메라가 인물에게 천천히 다가감(돌리 인)'},
+  {id:'pullout',ko:'멀어지기',hint:'주변이 드러남',term:'돌리 아웃',en:'The camera slowly pulls back, revealing the surroundings (dolly out)',kp:'카메라가 천천히 뒤로 물러나며 주변을 드러냄(돌리 아웃)'},
+  {id:'zoomin',ko:'렌즈로 당기기',hint:'카메라는 제자리',term:'줌 인',en:'The camera stays in place and zooms in with the lens (zoom in, not a dolly)',kp:'카메라는 제자리에 두고 렌즈로 당겨 확대(줌 인)'},
   {id:'pan',ko:'좌우로 훑기',hint:'공간 보여주기',term:'팬',en:'The camera pans slowly from left to right',kp:'카메라가 왼쪽에서 오른쪽으로 천천히 훑음(팬)'},
   {id:'tilt',ko:'위아래로 훑기',hint:'인물 소개·높이감',term:'틸트',en:'The camera tilts slowly upward',kp:'카메라가 아래에서 위로 천천히 훑어 올라감(틸트 업)'},
   {id:'track',ko:'따라가기',hint:'걷는 인물 옆에서',term:'트래킹 샷',en:'Tracking shot, the camera moves alongside the subject',kp:'카메라가 인물 옆에서 함께 이동(트래킹 샷)'},
   {id:'crane',ko:'위로 솟아오르기',hint:'마무리 장면에 좋음',term:'크레인 샷',en:'Crane shot, the camera slowly rises up and away',kp:'카메라가 위로 천천히 솟아오르며 멀어짐(크레인 샷)'},
   {id:'orbit',ko:'주위를 돌기',hint:'역동적이지만 주의',term:'아크 샷',en:'Arc shot, the camera slowly circles around the subject',kp:'카메라가 인물 주위를 천천히 돎(아크 샷)',risky:true},
-  {id:'handheld',ko:'손으로 들고',hint:'현장감, 흔들림 주의',term:'핸드헬드',en:'Handheld camera with subtle natural shake',kp:'손으로 든 듯 살짝 흔들리는 카메라(핸드헬드)',risky:true}
+  {id:'handheld',ko:'손으로 들고',hint:'현장감, 흔들림 주의',term:'핸드헬드',en:'Handheld camera with subtle natural shake',kp:'손으로 든 듯 살짝 흔들리는 카메라(핸드헬드)',risky:true},
+  {id:'dollyzoom',ko:'배경만 늘어나기',hint:'충격·깨달음의 순간',term:'돌리 줌 (버티고)',en:'Dolly zoom (vertigo effect): the camera moves in while zooming out, so the subject stays the same size while the background stretches away',kp:'카메라는 다가가면서 렌즈는 넓어져, 인물 크기는 그대로인데 배경만 늘어나는 돌리 줌(버티고 효과)',risky:true},
+  {id:'whip',ko:'휙 돌리기',hint:'놀람·빠른 시선 이동',term:'휩 팬',en:'Whip pan: the camera swings sideways very fast with strong motion blur',kp:'카메라가 옆으로 아주 빠르게 휙 돌아가며 화면이 번짐(휩 팬)',risky:true,noSpeed:true},
+  {id:'fpv',ko:'드론처럼 날아가기',hint:'공간을 뚫고 지나감',term:'FPV 드론 샷',en:'FPV drone shot: the camera flies smoothly and swiftly through the space, gliding past objects',kp:'드론이 공간 사이를 부드럽고 빠르게 날아 지나가는 FPV 드론 샷',risky:true}
 ];
+const FOCUSES = [
+  {id:'',ko:'자동'},
+  {id:'shallow',ko:'배경 흐리게',hint:'인물에 집중',term:'얕은 심도',en:'Shallow depth of field: the subject is sharp and the background is softly blurred',kp:'얕은 심도: 인물은 선명하고 배경은 부드럽게 흐림'},
+  {id:'rack',ko:'초점 옮기기',hint:'앞 물건 → 인물로 시선 이동',term:'랙 포커스',en:'Rack focus: the focus shifts smoothly from the foreground to the subject',kp:'랙 포커스: 초점이 앞쪽에서 인물로 부드럽게 옮겨 감'},
+  {id:'deep',ko:'모두 선명하게',hint:'공간 전체 보여주기',term:'딥 포커스',en:'Deep focus: everything from foreground to background is sharp',kp:'딥 포커스: 앞부터 뒤까지 모두 선명'}
+];
+const TRANS = [
+  {id:'cut',ko:'바로 바뀜',hint:'가장 깔끔',term:'하드 컷',en:'hard cut',kp:'바로 화면 전환(하드 컷)'},
+  {id:'whip',ko:'휙 넘기기',hint:'빠르고 경쾌하게',term:'휩 팬 전환',en:'whip-pan transition: a fast blurred swish from the previous shot into this one',kp:'앞 컷에서 카메라가 휙 돌며 번지듯 넘어옴(휩 팬 전환)'},
+  {id:'match',ko:'모양 이어 붙이기',hint:'비슷한 모양·동작으로 연결',term:'매치 컷',en:'match cut: this shot opens on a shape or motion that matches the end of the previous shot',kp:'앞 컷 끝의 모양·동작과 비슷한 모습으로 시작(매치 컷)'},
+  {id:'dissolve',ko:'겹쳐 바뀌기',hint:'시간 흐름·여운',term:'디졸브',en:'soft cross-dissolve from the previous shot',kp:'앞 컷과 부드럽게 겹치며 바뀜(디졸브)'}
+];
+// 막연한 표현: AI가 구체적인 연출로 옮기기 어려운 말
+const VAGUE = /(감성|세련|멋있|멋지게|예쁘게|이쁘게|고급스럽|퀄리티|느낌 ?있|분위기 ?있|간지|힙하게|있어 ?보이)/;
+const hasSpeed = id=>!byId(MOVES,id).noSpeed;
 const SPEEDS = [
   {id:'slow',ko:'아주 천천히',en:'very slow and gentle',kp:'아주 천천히, 부드럽게'},
   {id:'normal',ko:'보통',en:'smooth and steady',kp:'일정한 속도로 부드럽게'},
@@ -400,10 +423,10 @@ const byId = (arr,id)=>arr.find(o=>o.id===id) || arr[0];
 
 /* ---------- 상태 ---------- */
 const KEY='sb-prompt-maker-v1';
-const CUT_KEYS=['shot','angle','move','speed','action','emotion','speaker','line','sfx','dur'];
+const CUT_KEYS=['shot','angle','move','speed','focus','trans','action','emotion','speaker','line','sfx','dur'];
 const MAX_CUTS=3, MIN_CUT=2;
 function defCommon(){ return {photo:true,photoDesc:'',who:'',look:'',others:'',place:'',light:'golden',style:'film',mood:'warm',music:'none',len:10,lightCustom:'',styleCustom:'',moodCustom:''}; }
-function defCut(shot){ return {dur:0,shot:shot||'ms',angle:'eye',move:'static',speed:'slow',action:'',emotion:'',speaker:'',line:'',sfx:''}; }
+function defCut(shot){ return {dur:0,shot:shot||'ms',angle:'eye',move:'static',speed:'slow',focus:'',trans:'cut',action:'',emotion:'',speaker:'',line:'',sfx:''}; }
 function defScene(i){ return {link:'continue',place:'',light:'',endState:'',cuts:[defCut(i===0?'photo':'ms')]}; }
 // 예전 저장 형식(장면 = 컷 1개)도 읽을 수 있게 변환
 function normScene(x,i,L){
@@ -606,12 +629,13 @@ function cutEditor(s,i,c,k){
   }
   box.innerHTML=`
     ${single?'':`<div class="cut-head"><h4>컷 ${k+1}</h4><span class="time">${st}~${st+c.dur}초 · 전체 ${base+st}~${base+st+c.dur}초</span>${durCtl}<span class="spacer"></span><button class="btn small ghost" type="button" data-cact="del">컷 삭제</button></div>
-    ${k>0?`<p class="cut-cut">✂️ 여기서 화면이 바뀌어요</p>`:''}`}
+    ${k>0?`<p class="cut-cut">✂️ 여기서 화면이 바뀌어요</p><div class="field"><span class="label">앞 컷에서 어떻게 넘어갈까요?</span><div class="chips" data-g="trans"></div></div>`:''}`}
     <p class="sub-title" style="margin-top:${single?14:10}px">🎥 카메라</p>
     <div class="field"><span class="label">얼마나 가깝게 찍을까요?</span><div class="chips" data-g="shot"></div></div>
     <div class="field"><span class="label">어느 높이에서 찍을까요?</span><div class="chips" data-g="angle"></div></div>
     <div class="field"><span class="label">카메라는 어떻게 움직일까요?</span><div class="chips" data-g="move"></div></div>
     <div class="field" data-g="speedWrap"><span class="label">움직임 속도</span><div class="chips" data-g="speed"></div></div>
+    <div class="field"><span class="label">초점은 어디에 둘까요? <span class="sub">모르면 '자동'</span></span><div class="chips" data-g="focus"></div></div>
     <div class="sub-group">
       <p class="sub-title">🎭 내용</p>
       <div class="field"><label>무슨 일이 일어나나요? <span class="sub">${single?'행동 1~2개면 충분해요':'이 컷에서는 행동 1개'}</span></label>
@@ -630,9 +654,11 @@ function cutEditor(s,i,c,k){
   const shots = SHOTS.filter(o=>o.id!=='photo' || (i===0 && k===0 && state.common.photo));
   chipGroup(g('shot'),shots,c.shot,v=>{c.shot=v;changed(i);},{icons:true});
   chipGroup(g('angle'),ANGLES,c.angle,v=>{c.angle=v;changed(i);},{icons:true});
-  chipGroup(g('move'),MOVES,c.move,v=>{c.move=v;g('speedWrap').classList.toggle('hidden',v==='static');changed(i);},{icons:true});
+  chipGroup(g('move'),MOVES,c.move,v=>{c.move=v;g('speedWrap').classList.toggle('hidden',!hasSpeed(v));changed(i);},{icons:true});
   chipGroup(g('speed'),SPEEDS,c.speed,v=>{c.speed=v;changed(i);});
-  g('speedWrap').classList.toggle('hidden',c.move==='static');
+  g('speedWrap').classList.toggle('hidden',!hasSpeed(c.move));
+  chipGroup(g('focus'),FOCUSES,c.focus,v=>{c.focus=v;changed(i);});
+  if(g('trans')) chipGroup(g('trans'),TRANS,c.trans,v=>{c.trans=v;changed(i);});
   box.querySelectorAll('[data-k]').forEach(inp=>{
     const key=inp.dataset.k; inp.value=c[key]||'';
     inp.addEventListener(inp.tagName==='SELECT'?'change':'input',()=>{ c[key]=inp.value; changed(i); });
@@ -665,14 +691,17 @@ function warnings(i){
   const isPhoto = i===0 && state.common.photo;
   s.cuts.forEach((c,k)=>{
     const tag = n>1 ? `[컷 ${k+1}] ` : '';
-    const mv=byId(MOVES,c.move), sp=byId(SPEEDS,c.speed), big = mv.risky || (c.move!=='static' && sp.risky);
+    const mv=byId(MOVES,c.move), sp=byId(SPEEDS,c.speed), big = mv.risky || (hasSpeed(c.move) && sp.risky);
     if(!clean(c.action) && !(isPhoto && k===0 && c.shot==='photo' && n===1)) out.push(['warn',`${tag}"무슨 일이 일어나나요?"를 적어 주세요. 비어 있으면 AI가 마음대로 움직임을 만들어요.`]);
     if(big && k===n-1 && continues) out.push(['warn',`${tag}'${mv.risky?mv.ko:'빠르게'}'는 다음 장면으로 이어질 때 화면이 일그러지기 쉬워요. 마지막 장면에서만 쓰거나 '아주 천천히'로 바꿔 보세요.`]);
     else if(big) out.push(['info',`${tag}움직임이 큰 선택이에요. 손이나 얼굴이 일그러지면 더 차분하게 바꿔 보세요.`]);
     if(clean(c.line).length > Math.round(c.dur*3.5)) out.push(['warn',`${tag}대사가 ${c.dur}초에 비해 길어요. 입 모양이 어색해지거나 잘릴 수 있으니 한두 마디로 줄여 보세요.`]);
     if((clean(c.action).match(/(그리고|한 다음|하고 나서|후에|,)/g)||[]).length >= (n>1?2:3)) out.push(['info',`${tag}행동이 많아 보여요. ${n<MAX_CUTS?'컷을 나누거나 ':''}장면을 나눠 보세요.`]);
-    if(n>1 && k>0 && c.shot===s.cuts[k-1].shot && c.angle===s.cuts[k-1].angle) out.push(['info',`${tag}앞 컷과 화면 크기·높이가 같아서 컷이 바뀐 게 잘 안 보여요. 크기를 다르게 고르면 컷 전환이 또렷해요.`]);
+    const vg=clean(c.action).match(VAGUE);
+    if(vg) out.push(['info',`${tag}'${esc(vg[0])}' 같은 막연한 말은 AI가 정확히 따르기 어려워요. 위의 카메라·초점 선택지(예: 돌리 인, 랙 포커스)로 원하는 느낌을 골라 주세요.`]);
+    if(n>1 && k>0 && c.shot===s.cuts[k-1].shot && c.angle===s.cuts[k-1].angle && c.trans!=='match') out.push(['info',`${tag}앞 컷과 화면 크기·높이가 같아서 컷이 바뀐 게 잘 안 보여요. 크기를 다르게 고르면 컷 전환이 또렷해요.`]);
   });
+  if(s.cuts.filter(c=>byId(MOVES,c.move).risky).length>=2) out.push(['info','큰 움직임(휩 팬, FPV, 돌리 줌 등)을 한 장면에 여러 번 쓰면 산만해져요. 강조하고 싶은 한 컷에만 쓰고 나머지는 차분하게 두면 더 몰입돼요.']);
   if(continues && !clean(s.endState)) out.push(['warn','"장면이 끝날 때 모습"을 적으면 다음 장면이 훨씬 자연스럽게 이어져요.']);
   if(i>0 && s.link!=='new' && lastCut(state.scenes[i-1]).shot!==firstCut(s).shot) out.push(['info',`앞 장면 마지막과 ${n>1?'첫 컷의 ':''}화면 크기가 달라요. 끊기지 않도록 "앞 구도에서 시작해 천천히 바뀌게" 하라는 문장을 프롬프트에 자동으로 넣었어요.`]);
   if(i>0 && s.link==='new') out.push(['info','장소가 바뀌는 장면은 이어 만들기보다 Gemini에서 <b>새로 만든 뒤</b> 편집 앱에서 앞 영상과 붙이는 게 자연스러워요.']);
@@ -692,7 +721,7 @@ function sceneCtx(i){
   const place = (s.link==='new' && clean(s.place)) ? clean(s.place) : clean(c.place);
   const cuts = s.cuts.map((ct,k)=>{
     const shotId = (ct.shot==='photo' && !(isPhoto && k===0)) ? 'ms' : ct.shot;
-    return {ct, start:cutStart(s,k), shot:byId(SHOTS,shotId), angle:byId(ANGLES,ct.angle), move:byId(MOVES,ct.move), speed:byId(SPEEDS,ct.speed), emo:EMOTIONS.find(e=>e.id===ct.emotion)};
+    return {ct, start:cutStart(s,k), shot:byId(SHOTS,shotId), angle:byId(ANGLES,ct.angle), move:byId(MOVES,ct.move), speed:byId(SPEEDS,ct.speed), focus:FOCUSES.find(f=>f.id && f.id===ct.focus), trans:byId(TRANS,ct.trans), emo:EMOTIONS.find(e=>e.id===ct.emotion)};
   });
   return {c,s,prev,next,isPhoto,isExt,light,place,cuts,
     style:pick('style'), mood:pick('mood'), music:byId(MUSICS,c.music),
@@ -703,8 +732,9 @@ function sceneCtx(i){
 // 컷 하나의 카메라·행동·소리 문장 (lang: 'en' | 'ko')
 function cutParts(x,cu,lang,who){
   const ct=cu.ct, en=lang==='en', p={};
-  p.cam = en ? `${cu.shot.en}, ${cu.angle.en}. ${cu.move.en}${ct.move!=='static'?`, ${cu.speed.en}`:''}.`
-             : `${cu.shot.kp}, ${cu.angle.kp}. ${cu.move.kp}${ct.move!=='static'?`, ${cu.speed.kp}`:''}.`;
+  const sp=hasSpeed(ct.move), f=cu.focus;
+  p.cam = en ? `${cu.shot.en}, ${cu.angle.en}. ${cu.move.en}${sp?`, ${cu.speed.en}`:''}.${f?` ${f.en}.`:''}`
+             : `${cu.shot.kp}, ${cu.angle.kp}. ${cu.move.kp}${sp?`, ${cu.speed.kp}`:''}.${f?` ${f.kp}.`:''}`;
   if(clean(ct.action)) p.act = clean(ct.action)+'.';
   else if(x.isPhoto && cu.start===0) p.act = en ? 'subtle, natural movement that brings the photo to life.' : '사진이 살아 움직이는 듯한 작고 자연스러운 움직임.';
   if(cu.emo && cu.emo.id) p.emo = en ? cu.emo.en+'.' : cu.emo.kp+' 표정.';
@@ -742,10 +772,10 @@ function buildEn(i){
     lines.push(`Audio: ${audio.join(' ')}`);
   } else {
     lines.push('');
-    lines.push(`This ${L}-second clip is made of ${n} shots joined by clean cuts, following this timeline:`);
+    lines.push(`This ${L}-second clip is made of ${n} shots, following this timeline:`);
     x.cuts.forEach((cu,k)=>{
       const p=cutParts(x,cu,'en',who), seg=[];
-      seg.push(`[00:${pad2(cu.start)}-00:${pad2(cu.start+cu.ct.dur)}] Shot ${k+1}${k>0?' (cut to)':''}: ${p.cam}`);
+      seg.push(`[00:${pad2(cu.start)}-00:${pad2(cu.start+cu.ct.dur)}] Shot ${k+1}${k>0?` (${cu.trans.en})`:''}: ${p.cam}`);
       if(p.act) seg.push(`Action: ${p.act}`);
       if(p.emo) seg.push(`Expression: ${p.emo}`);
       if(p.line) seg.push(p.line);
@@ -791,10 +821,10 @@ function buildKo(i){
     lines.push(`소리: ${audio.join(' ')}`);
   } else {
     lines.push('');
-    lines.push(`이 ${L}초 영상은 ${n}개의 컷으로 이루어져 있고, 컷 사이는 깔끔하게 화면이 바뀌어. 아래 시간표대로 만들어 줘:`);
+    lines.push(`이 ${L}초 영상은 ${n}개의 컷으로 이루어져 있어. 아래 시간표대로 만들어 줘:`);
     x.cuts.forEach((cu,k)=>{
       const p=cutParts(x,cu,'ko',who), seg=[];
-      seg.push(`[${cu.start}~${cu.start+cu.ct.dur}초] 컷 ${k+1}${k>0?' (화면 전환)':''}: ${p.cam}`);
+      seg.push(`[${cu.start}~${cu.start+cu.ct.dur}초] 컷 ${k+1}${k>0?` (${cu.trans.kp})`:''}: ${p.cam}`);
       if(p.act) seg.push(`행동: ${p.act}`);
       if(p.emo) seg.push(`표정: ${p.emo}`);
       if(p.line) seg.push(p.line);
@@ -881,12 +911,18 @@ function renderFix(){
 
 /* ---------- 용어 사전 ---------- */
 (function renderGlossary(){
-  const cats=[['화면 크기 (Shot Size): 얼마나 가깝게',SHOTS.filter(o=>o.id!=='photo')],['카메라 각도 (Camera Angle): 어느 높이에서',ANGLES],['카메라 움직임 (Camera Movement): 어떻게 움직이며',MOVES]];
-  $('#glossary-body').innerHTML=cats.map(([t,arr])=>`<h4 class="term-cat">${esc(t)}</h4><div class="term-grid">${arr.map(o=>`<div class="term">${ICON[o.id]||''}<div><b>${esc(o.term)}</b><span>${esc(o.ko)} · ${esc(o.hint)}<br><i>${esc(o.en.split(',')[0].split('(')[0])}</i></span></div></div>`).join('')}</div>`).join('')
+  const cats=[['화면 크기 (Shot Size): 얼마나 가깝게',SHOTS.filter(o=>o.id!=='photo'),true],['카메라 각도 (Camera Angle): 어느 높이에서',ANGLES,true],['카메라 움직임 (Camera Movement): 어떻게 움직이며',MOVES,true],['초점 (Focus): 어디를 선명하게',FOCUSES.filter(o=>o.id)],['컷 전환 (Transition): 컷과 컷을 어떻게 잇나',TRANS]];
+  $('#glossary-body').innerHTML=`<h4 class="term-cat">💡 막연한 말 대신 정확한 연출 용어</h4><ul class="tips">
+      <li>"감성 있게", "세련되게", "느낌 있게"는 AI가 무엇을 해야 할지 몰라요. 대신 <b>무엇을, 어떻게 찍을지</b>를 용어로 말해 주세요.</li>
+      <li>예: "뭉클하게" → <b>클로즈업 + 돌리 인 + 얕은 심도</b> / "긴장감 있게" → <b>돌리 줌</b> / "역동적으로" → <b>FPV 드론 샷, 휩 팬 전환</b> / "시선이 옮겨 가게" → <b>랙 포커스</b></li>
+      <li><b>돌리 인 vs 줌 인</b>: 돌리 인은 카메라가 <b>직접 다가가서</b> 인물과 배경의 거리감이 바뀌어요. 줌 인은 카메라는 제자리에서 <b>렌즈로만 당겨</b> 화면이 평평하게 커져요.</li>
+      <li><b>섞어 쓰는 요령</b>: 큰 움직임을 컷마다 쓰면 산만해요. 차분한 컷 사이에 강조할 한 컷만 크게 움직이면 긴장감과 몰입이 생겨요.</li></ul>`
+  + cats.map(([t,arr,icons])=>`<h4 class="term-cat">${esc(t)}</h4><div class="term-grid">${arr.map(o=>`<div class="term">${icons?(ICON[o.id]||''):''}<div><b>${esc(o.term)}</b><span>${esc(o.ko)} · ${esc(o.hint)}<br><i>${esc(o.en.split(/[,:(]/)[0].trim())}</i></span></div></div>`).join('')}</div>`).join('')
   + `<h4 class="term-cat">장면(씬)과 컷</h4><ul class="tips">
       <li><b>장면(씬, Scene)</b>: Gemini에서 한 번에 만드는 영상 하나(10초)예요.</li>
       <li><b>컷(Cut, 샷)</b>: 한 장면 안에서 화면이 바뀌는 단위예요. 예: 앞 5초는 멀리서 → 뒤 5초는 손을 가까이. 한 장면에 2~3개가 적당해요.</li>
-      <li><b>컷 전환이 또렷하려면</b>: 앞뒤 컷의 화면 크기를 확실히 다르게 고르세요. (멀리 → 얼굴 가득)</li></ul>
+      <li><b>컷 전환이 또렷하려면</b>: 앞뒤 컷의 화면 크기를 확실히 다르게 고르세요. (멀리 → 얼굴 가득)</li>
+      <li><b>컷 전환 방법</b>: 보통은 '바로 바뀜(하드 컷)'이 가장 깔끔해요. 휩 팬 전환·매치 컷은 강조하고 싶은 한 곳에만 써 보세요.</li></ul>
     <h4 class="term-cat">이어 만들기 요령</h4><ul class="tips">
       <li><b>장면 끝은 차분하게</b>: 다음 장면으로 이어질 장면은 끝부분 움직임이 작을수록 덜 튀어요.</li>
       <li><b>끝 모습 → 시작 모습</b>: 앞 장면이 끝나는 모습을 다음 장면의 시작으로 적어 주면 자연스럽게 이어져요. 이 홈페이지가 자동으로 넣어 줘요.</li>
