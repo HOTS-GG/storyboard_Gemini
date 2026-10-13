@@ -117,7 +117,31 @@ ul.tips li+li{margin-top:6px}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 footer{margin-top:48px;color:var(--muted);font-size:13px;text-align:center}
 .hidden{display:none!important}
-@media print{nav.jump,.btn,#editor,#setup,#fix,details.terms,header .steps{display:none!important}.card{box-shadow:none}}
+/* 이야기 마법사 */
+.wiz{border:1.5px dashed var(--accent);background:color-mix(in srgb,var(--accent-weak) 45%,var(--surface));margin-bottom:16px}
+.wiz-title{margin:0;font-size:18px}
+/* 콘티 */
+.board-scene+.board-scene{margin-top:22px}
+.board-scene h3{font-size:17px;margin:0 0 8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.board-link{font-size:13px;color:var(--muted);font-weight:400}
+.panels{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.panel{background:var(--surface);border:1.5px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;break-inside:avoid;cursor:pointer;text-align:left;font:inherit;color:var(--ink);padding:0}
+.panel:hover{border-color:var(--accent)}
+.panel-pic{position:relative;background:var(--surface-2);border-bottom:1px solid var(--line);padding:26px 10px 10px;display:grid;place-items:center}
+.panel-pic>svg{width:100%;max-width:190px;height:auto;aspect-ratio:4/3;color:var(--ink)}
+.panel-mini{position:absolute;right:6px;bottom:6px;display:flex;gap:4px}
+.panel-mini svg{width:38px;height:29px;background:var(--surface);border-radius:4px;color:var(--ink)}
+.panel-tag{position:absolute;left:8px;top:6px;font-size:12px;font-weight:700;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:1px 8px}
+.panel-trans{position:absolute;right:8px;top:6px;font-size:11.5px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:1px 8px}
+.panel-body{padding:10px 12px;font-size:14px;display:grid;gap:4px;line-height:1.5}
+.panel-time{font-size:12.5px;color:var(--muted)}
+.panel-terms{font-size:12.5px;color:var(--accent);font-weight:700}
+.panel-act.empty{color:var(--warn)}
+.panel-sub{font-size:13px;color:var(--muted)}
+.board-end{font-size:13.5px;color:var(--muted);margin-top:8px}
+@media print{nav.jump,.btn,#editor,#setup,#fix,details.terms,header .steps{display:none!important}.card{box-shadow:none}
+  body.print-board .wrap>*:not(#board){display:none!important}
+  .panels{grid-template-columns:repeat(3,1fr)}.panel-pic>svg{max-width:150px}}
 </style>
 </head>
 <body>
@@ -128,16 +152,18 @@ footer{margin-top:48px;color:var(--muted);font-size:13px;text-align:center}
     <p>장면을 쉬운 말로 고르면, Gemini가 잘 알아듣는 영상 프롬프트로 바꿔 드려요.</p>
     <ol class="steps">
       <li><b>1</b> 기본 설정 (한 번만)</li>
-      <li><b>2</b> 장면 고르기 (10초씩)</li>
-      <li><b>3</b> 프롬프트 복사 → Gemini에 붙여넣기</li>
+      <li><b>2</b> 장면 만들기 (마법사로 쉽게)</li>
+      <li><b>3</b> 콘티 확인</li>
+      <li><b>4</b> 프롬프트 복사 → Gemini에 붙여넣기</li>
     </ol>
   </header>
 
   <nav class="jump" aria-label="바로가기">
     <a href="#setup">① 기본 설정</a>
     <a href="#editor">② 장면 만들기</a>
-    <a href="#result">③ 프롬프트 받기</a>
-    <a href="#fix">④ 어색할 때</a>
+    <a href="#board">③ 콘티 보기</a>
+    <a href="#result">④ 프롬프트 받기</a>
+    <a href="#fix">⑤ 어색할 때</a>
     <a href="#glossary">📖 용어 사전</a>
   </nav>
 
@@ -198,6 +224,20 @@ footer{margin-top:48px;color:var(--muted);font-size:13px;text-align:center}
   <section class="block" id="editor">
     <h2><span class="num">2</span>장면 만들기</h2>
     <p class="lead">장면 하나가 Gemini에서 한 번 만드는 영상(10초)이에요. 그 안에서 화면을 바꾸고 싶으면 <b>✂️ 컷 나누기</b>를 누르세요. 예를 들어 앞 5초는 멀리서, 뒤 5초는 얼굴을 가까이 보여 줄 수 있어요. <b>'장면이 끝날 때 모습'</b>도 꼭 적어 주세요. 다음 장면이 그 모습에서 이어서 시작돼요.</p>
+    <div class="card wiz" id="wizard">
+      <h3 class="wiz-title">🪄 처음이라면: 이야기 뼈대 마법사</h3>
+      <p class="lead" style="margin:4px 0 0">질문 네 개에 답하면 장면을 나누고 카메라까지 알맞게 채워 드려요. 만든 뒤에 아래에서 마음대로 고칠 수 있어요.</p>
+      <div class="grid2 field">
+        <div><label for="w-who">주인공</label><input type="text" id="w-who" data-wc="who" placeholder="예: 50대 남자 선생님"></div>
+        <div><label for="w-place">장소</label><input type="text" id="w-place" data-wc="place" placeholder="예: 모두 하교한 초등학교 교실"></div>
+      </div>
+      <div class="field"><label for="w-b1">① 처음 모습: 주인공은 무엇을 하고 있나요?</label><input type="text" id="w-b1" data-wb="b1" placeholder="예: 빈 교실에서 혼자 칠판을 지우고 있다"></div>
+      <div class="field"><label for="w-b2">② 무슨 일이 생기나요?</label><input type="text" id="w-b2" data-wb="b2" placeholder="예: 책상 위에서 학생이 남긴 쪽지를 발견한다"></div>
+      <div class="field"><label for="w-b3">③ 마음이 가장 크게 움직이는 순간은?</label><input type="text" id="w-b3" data-wb="b3" placeholder="예: 쪽지를 읽고 눈시울이 붉어진 채 미소 짓는다"></div>
+      <div class="field"><label for="w-b4">④ 마지막 모습은? <span class="sub">여운이 남는 장면</span></label><input type="text" id="w-b4" data-wb="b4" placeholder="예: 창가에 서서 노을 진 운동장을 바라본다"></div>
+      <div class="field"><span class="label">몇 장면으로 만들까요?</span><div class="chips" id="w-n"></div></div>
+      <div class="row" style="margin-top:16px"><button class="btn primary" type="button" id="w-go">🪄 장면 뼈대 만들기</button></div>
+    </div>
     <div id="scenes"></div>
     <div class="row" style="margin-top:16px">
       <button class="btn primary" type="button" id="add-scene">＋ 다음 장면 추가</button>
@@ -206,9 +246,17 @@ footer{margin-top:48px;color:var(--muted);font-size:13px;text-align:center}
     </div>
   </section>
 
-  <!-- 3. 결과 -->
+  <!-- 3. 콘티 -->
+  <section class="block" id="board">
+    <h2><span class="num">3</span>콘티 보기</h2>
+    <p class="lead">고른 내용을 만화 칸처럼 한눈에 보여 줘요. 같은 화면이 반복되지 않는지, 이야기가 잘 흘러가는지 확인해 보세요. 칸을 누르면 그 장면을 고치러 가요.</p>
+    <div class="row" style="margin-bottom:12px"><button class="btn small" type="button" id="print-board">🖨 콘티만 인쇄</button></div>
+    <div id="board-body"></div>
+  </section>
+
+  <!-- 4. 결과 -->
   <section class="block" id="result">
-    <h2><span class="num">3</span>프롬프트 받기</h2>
+    <h2><span class="num">4</span>프롬프트 받기</h2>
     <p class="lead"><b>영어 프롬프트를 복사해서 쓰는 걸 추천해요.</b> 영상 AI는 영어를 더 정확하게 따라요. 한국어는 내용 확인용이고, 그대로 붙여 넣어도 돼요. 직접 적은 내용은 한국어 그대로 들어가는데, Gemini는 섞여 있어도 잘 알아들어요.</p>
     <div class="row" style="margin-bottom:12px">
       <button class="btn small" type="button" id="copy-all">📋 영어 프롬프트 전체 복사</button>
@@ -220,7 +268,7 @@ footer{margin-top:48px;color:var(--muted);font-size:13px;text-align:center}
 
   <!-- 4. 어색할 때 -->
   <section class="block" id="fix">
-    <h2><span class="num">4</span>영상이 어색할 때</h2>
+    <h2><span class="num">5</span>영상이 어색할 때</h2>
     <p class="lead">문제를 고르면 Gemini에 보낼 수정 요청 문장을 만들어 드려요.</p>
     <div class="card">
       <div class="field"><label for="fix-where">어디가 어색한가요?</label><select id="fix-where"></select></div>
@@ -349,6 +397,24 @@ const TRANS = [
 // 막연한 표현: AI가 구체적인 연출로 옮기기 어려운 말
 const VAGUE = /(감성|세련|멋있|멋지게|예쁘게|이쁘게|고급스럽|퀄리티|느낌 ?있|분위기 ?있|간지|힙하게|있어 ?보이)/;
 const hasSpeed = id=>!byId(MOVES,id).noSpeed;
+// 느낌 → 연출 묶음 (고르면 카메라 설정이 한 번에 채워짐)
+const FEELS = [
+  {id:'moving',ko:'🥹 뭉클하게',set:{shot:'cu',angle:'eye',move:'pushin',speed:'slow',focus:'shallow'}},
+  {id:'calm',ko:'🍃 평온하게',set:{shot:'ws',angle:'eye',move:'static',focus:'deep'}},
+  {id:'flutter',ko:'💗 설레게',set:{shot:'ms',angle:'eye',move:'track',speed:'normal',focus:'shallow'}},
+  {id:'lonely',ko:'🌧 쓸쓸하게',set:{shot:'ws',angle:'high',move:'pullout',speed:'slow',focus:'deep'}},
+  {id:'grand',ko:'🌄 웅장하게',set:{shot:'ews',angle:'low',move:'crane',speed:'slow',focus:'deep'}},
+  {id:'tense',ko:'😨 긴장되게',set:{shot:'cu',angle:'low',move:'dollyzoom',speed:'slow',focus:'shallow'}},
+  {id:'curious',ko:'🔍 궁금하게',set:{shot:'ecu',angle:'eye',move:'static',focus:'rack'}},
+  {id:'talk',ko:'💬 대화하듯',set:{shot:'ms',angle:'ots',move:'static',focus:'shallow'}},
+  {id:'lively',ko:'⚡ 신나게',set:{shot:'fs',angle:'eye',move:'track',speed:'fast'}}
+];
+function applyFeel(c,id){
+  const f=FEELS.find(x=>x.id===id); if(!f) return '';
+  const keep=c.shot==='photo';
+  Object.assign(c,{speed:'slow',focus:''},f.set); if(keep) c.shot='photo'; c.feel=id;
+  return [keep?null:byId(SHOTS,c.shot).term, byId(ANGLES,c.angle).term, byId(MOVES,c.move).term, c.focus?byId(FOCUSES,c.focus).term:null].filter(Boolean).join(' · ');
+}
 const SPEEDS = [
   {id:'slow',ko:'아주 천천히',en:'very slow and gentle',kp:'아주 천천히, 부드럽게'},
   {id:'normal',ko:'보통',en:'smooth and steady',kp:'일정한 속도로 부드럽게'},
@@ -423,10 +489,11 @@ const byId = (arr,id)=>arr.find(o=>o.id===id) || arr[0];
 
 /* ---------- 상태 ---------- */
 const KEY='sb-prompt-maker-v1';
-const CUT_KEYS=['shot','angle','move','speed','focus','trans','action','emotion','speaker','line','sfx','dur'];
+const CUT_KEYS=['feel','shot','angle','move','speed','focus','trans','action','emotion','speaker','line','sfx','dur'];
 const MAX_CUTS=3, MIN_CUT=2;
+function defWiz(){ return {b1:'',b2:'',b3:'',b4:'',n:4}; }
 function defCommon(){ return {photo:true,photoDesc:'',who:'',look:'',others:'',place:'',light:'golden',style:'film',mood:'warm',music:'none',len:10,lightCustom:'',styleCustom:'',moodCustom:''}; }
-function defCut(shot){ return {dur:0,shot:shot||'ms',angle:'eye',move:'static',speed:'slow',focus:'',trans:'cut',action:'',emotion:'',speaker:'',line:'',sfx:''}; }
+function defCut(shot){ return {dur:0,feel:'',shot:shot||'ms',angle:'eye',move:'static',speed:'slow',focus:'',trans:'cut',action:'',emotion:'',speaker:'',line:'',sfx:''}; }
 function defScene(i){ return {link:'continue',place:'',light:'',endState:'',cuts:[defCut(i===0?'photo':'ms')]}; }
 // 예전 저장 형식(장면 = 컷 1개)도 읽을 수 있게 변환
 function normScene(x,i,L){
@@ -445,10 +512,10 @@ function fitDurs(s,L){
   if(head.every(c=>+c.dur>=MIN_CUT) && L-sum>=MIN_CUT){ s.cuts[n-1].dur=L-sum; return; }
   const base=Math.floor(L/n); s.cuts.forEach((c,k)=>c.dur = k<n-1 ? base : L-base*(n-1));
 }
-let state = load() || {common:defCommon(),scenes:[normScene({},0,10)]};
+let state = load() || {common:defCommon(),scenes:[normScene({},0,10)],wiz:defWiz()};
 let fixSel = new Set();
 
-function load(){ try{ const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.common&&Array.isArray(s.scenes)&&s.scenes.length){ s.common=Object.assign(defCommon(),s.common); s.scenes=s.scenes.map((x,i)=>normScene(x,i,s.common.len)); return s; } }catch(e){} return null; }
+function load(){ try{ const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.common&&Array.isArray(s.scenes)&&s.scenes.length){ s.common=Object.assign(defCommon(),s.common); s.wiz=Object.assign(defWiz(),s.wiz); s.scenes=s.scenes.map((x,i)=>normScene(x,i,s.common.len)); return s; } }catch(e){} return null; }
 let saveT; function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} },300); }
 
 /* ---------- 예시 ---------- */
@@ -523,7 +590,7 @@ function renderCommon(){
   chipGroup($('#c-len'),LENS,c.len,v=>{c.len=v;state.scenes.forEach(s=>fitDurs(s,v));renderScenes();changed();});
 }
 ['photoDesc','who','look','others','place','lightCustom','styleCustom','moodCustom'].forEach(k=>{
-  $('#c-'+k).addEventListener('input',e=>{ state.common[k]=e.target.value; changed(); });
+  $('#c-'+k).addEventListener('input',e=>{ state.common[k]=e.target.value; const w=document.querySelector(`[data-wc="${k}"]`); if(w) w.value=e.target.value; changed(); });
 });
 $('#c-photo').addEventListener('change',e=>{
   state.common.photo=e.target.checked;
@@ -631,6 +698,7 @@ function cutEditor(s,i,c,k){
     ${single?'':`<div class="cut-head"><h4>컷 ${k+1}</h4><span class="time">${st}~${st+c.dur}초 · 전체 ${base+st}~${base+st+c.dur}초</span>${durCtl}<span class="spacer"></span><button class="btn small ghost" type="button" data-cact="del">컷 삭제</button></div>
     ${k>0?`<p class="cut-cut">✂️ 여기서 화면이 바뀌어요</p><div class="field"><span class="label">앞 컷에서 어떻게 넘어갈까요?</span><div class="chips" data-g="trans"></div></div>`:''}`}
     <p class="sub-title" style="margin-top:${single?14:10}px">🎥 카메라</p>
+    <div class="field"><span class="label">✨ 어떤 느낌으로 찍을까요? <span class="sub">고르면 아래 카메라 설정이 자동으로 채워져요</span></span><div class="chips" data-g="feel"></div></div>
     <div class="field"><span class="label">얼마나 가깝게 찍을까요?</span><div class="chips" data-g="shot"></div></div>
     <div class="field"><span class="label">어느 높이에서 찍을까요?</span><div class="chips" data-g="angle"></div></div>
     <div class="field"><span class="label">카메라는 어떻게 움직일까요?</span><div class="chips" data-g="move"></div></div>
@@ -652,12 +720,15 @@ function cutEditor(s,i,c,k){
     </div>`;
   const g = name=>box.querySelector(`[data-g="${name}"]`);
   const shots = SHOTS.filter(o=>o.id!=='photo' || (i===0 && k===0 && state.common.photo));
-  chipGroup(g('shot'),shots,c.shot,v=>{c.shot=v;changed(i);},{icons:true});
-  chipGroup(g('angle'),ANGLES,c.angle,v=>{c.angle=v;changed(i);},{icons:true});
-  chipGroup(g('move'),MOVES,c.move,v=>{c.move=v;g('speedWrap').classList.toggle('hidden',!hasSpeed(v));changed(i);},{icons:true});
-  chipGroup(g('speed'),SPEEDS,c.speed,v=>{c.speed=v;changed(i);});
+  // 직접 고치면 '느낌' 선택은 풀림
+  const manual=()=>{ if(c.feel){ c.feel=''; g('feel').querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed','false')); } };
+  chipGroup(g('feel'),FEELS,c.feel,v=>{ const t=applyFeel(c,v); rerenderScene(i); changed(i); toast('카메라를 채웠어요: '+t); });
+  chipGroup(g('shot'),shots,c.shot,v=>{c.shot=v;manual();changed(i);},{icons:true});
+  chipGroup(g('angle'),ANGLES,c.angle,v=>{c.angle=v;manual();changed(i);},{icons:true});
+  chipGroup(g('move'),MOVES,c.move,v=>{c.move=v;manual();g('speedWrap').classList.toggle('hidden',!hasSpeed(v));changed(i);},{icons:true});
+  chipGroup(g('speed'),SPEEDS,c.speed,v=>{c.speed=v;manual();changed(i);});
   g('speedWrap').classList.toggle('hidden',!hasSpeed(c.move));
-  chipGroup(g('focus'),FOCUSES,c.focus,v=>{c.focus=v;changed(i);});
+  chipGroup(g('focus'),FOCUSES,c.focus,v=>{c.focus=v;manual();changed(i);});
   if(g('trans')) chipGroup(g('trans'),TRANS,c.trans,v=>{c.trans=v;changed(i);});
   box.querySelectorAll('[data-k]').forEach(inp=>{
     const key=inp.dataset.k; inp.value=c[key]||'';
@@ -878,6 +949,73 @@ $('#download').addEventListener('click',()=>{
   document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
 });
 
+/* ---------- 이야기 뼈대 마법사 ---------- */
+const WIZ_NS = [{id:3,ko:'3장면 (30초)',hint:'처음 → 사건·감정 → 여운'},{id:4,ko:'4장면 (40초)',hint:'처음 → 사건 → 감정 → 여운'}];
+function renderWizard(){
+  document.querySelectorAll('[data-wb]').forEach(inp=>{ inp.value=state.wiz[inp.dataset.wb]||''; });
+  document.querySelectorAll('[data-wc]').forEach(inp=>{ inp.value=state.common[inp.dataset.wc]||''; });
+  chipGroup($('#w-n'),WIZ_NS,state.wiz.n,v=>{ state.wiz.n=v; save(); });
+}
+document.querySelectorAll('[data-wb]').forEach(inp=>inp.addEventListener('input',()=>{ state.wiz[inp.dataset.wb]=inp.value; save(); }));
+document.querySelectorAll('[data-wc]').forEach(inp=>inp.addEventListener('input',()=>{ const k=inp.dataset.wc; state.common[k]=inp.value; $('#c-'+k).value=inp.value; changed(); }));
+// 장면 공식: 장소 소개(멀리) → 사건(허리 위 + 아주 가까이) → 감정의 정점(클로즈업, 다가가기) → 여운(솟아오르기)
+function wizardScenes(){
+  const c=state.common, w=state.wiz, L=c.len, b=['b1','b2','b3','b4'].map(k=>clean(w[k]));
+  const who=clean(c.who)||'주인공', place=clean(c.place)||'장소';
+  const cut=(shot,action,o)=>{ const x=defCut(shot); if(o&&o.feel) applyFeel(x,o.feel); return Object.assign(x,{shot,action},o||{}); };
+  const head = Math.round(L*.4);
+  const s1 = c.photo
+    ? {endState:b[0],cuts:[cut('photo',b[0],{move:'pushin',speed:'slow'})]}
+    : {endState:b[0],cuts:[cut('ws',`${place}의 전체 모습, 그 안에 ${who}가 있다`,{feel:'calm',dur:head}), cut('ms',b[0],{move:'pushin',speed:'slow'})]};
+  const peak = {feel:'moving',emotion:'moved'};
+  const end = {endState:b[3],cuts:[cut('ws',b[3],{angle:'eye',move:'crane',speed:'slow',focus:'deep',emotion:'warm'})]};
+  if(w.n===3) return [s1, {endState:b[2],cuts:[cut('ms',b[1],{dur:head}), cut('cu',b[2],peak)]}, end];
+  return [s1,
+    {endState:b[1],cuts:[cut('ms',b[1],{dur:Math.round(L*.5)}), cut('ecu',`${b[1]} (손과 물건을 아주 가까이에서)`,{feel:'curious'})]},
+    {endState:b[2],cuts:[cut('cu',b[2],peak)]},
+    end];
+}
+$('#w-go').addEventListener('click',()=>{
+  const miss=['b1','b2','b3','b4'].map((k,n)=>clean(state.wiz[k])?'':'①②③④'[n]).filter(Boolean);
+  if(miss.length){ toast(`${miss.join(', ')} 질문에 답해 주세요`); document.querySelector(`[data-wb="b${'①②③④'.indexOf(miss[0])+1}"]`).focus(); return; }
+  const hasWork = state.scenes.some(s=>s.cuts.some(c=>clean(c.action)));
+  if(hasWork && !confirm('지금 만든 장면 대신 마법사로 새로 채울까요?')) return;
+  state.scenes = wizardScenes().map((s,i)=>normScene(s,i,state.common.len));
+  fixScene0(); renderScenes(); changed();
+  toast('장면 뼈대를 만들었어요. 콘티에서 확인해 보세요');
+  $('#scene-0').scrollIntoView({behavior:'smooth',block:'start'});
+});
+
+/* ---------- 콘티 ---------- */
+const LINK_KO = {continue:'앞 장면에서 그대로 이어짐',time:'같은 곳, 시간이 흐름',new:'새 장면 (따로 만들어 붙이기)'};
+function renderBoard(){
+  const L=state.common.len;
+  $('#board-body').innerHTML = state.scenes.map((s,i)=>{
+    const x=sceneCtx(i), n=x.cuts.length;
+    const panels = x.cuts.map((cu,k)=>{
+      const ct=cu.ct, st=i*L+cu.start, act=clean(ct.action);
+      const terms=[cu.shot.term, cu.angle.term, cu.move.term, cu.focus&&cu.focus.term].filter(Boolean).join(' · ');
+      const actTxt = act ? esc(act) : (x.isPhoto&&k===0 ? '사진이 살아 움직여요' : '⚠️ 무슨 일이 일어나는지 적어 주세요');
+      return `<button type="button" class="panel" data-goto="${i}" title="눌러서 S#${i+1} 고치기">
+        <div class="panel-pic"><span class="panel-tag">S#${i+1}${n>1?` · 컷 ${k+1}`:''}</span>${k>0?`<span class="panel-trans">✂️ ${esc(cu.trans.term)}</span>`:''}
+          ${ICON[cu.shot.id]||''}<span class="panel-mini">${ICON[cu.angle.id]||''}${ICON[cu.move.id]||''}</span></div>
+        <div class="panel-body">
+          <span class="panel-time">${st}~${st+ct.dur}초</span>
+          <span class="panel-terms">${esc(terms)}</span>
+          <span class="panel-act${act||(x.isPhoto&&k===0)?'':' empty'}">${actTxt}</span>
+          ${cu.emo&&cu.emo.id?`<span class="panel-sub">🙂 ${esc(cu.emo.ko)}</span>`:''}
+          ${clean(ct.line)?`<span class="panel-sub">💬 ${clean(ct.speaker)?esc(clean(ct.speaker))+': ':''}"${esc(ct.line.trim())}"</span>`:''}
+          ${clean(ct.sfx)?`<span class="panel-sub">🔊 ${esc(clean(ct.sfx))}</span>`:''}
+        </div></button>`;
+    }).join('');
+    return `<div class="board-scene"><h3>S#${i+1} <span class="time">${timeLabel(i)}</span>${i>0?`<span class="board-link">${LINK_KO[s.link]}</span>`:''}</h3>
+      <div class="panels">${panels}</div>${clean(s.endState)?`<div class="board-end">⭐ 끝 모습: ${esc(clean(s.endState))}</div>`:''}</div>`;
+  }).join('');
+  $('#board-body').querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>$('#scene-'+b.dataset.goto).scrollIntoView({behavior:'smooth',block:'start'})));
+}
+$('#print-board').addEventListener('click',()=>{ document.body.classList.add('print-board'); window.print(); });
+window.addEventListener('afterprint',()=>document.body.classList.remove('print-board'));
+
 /* ---------- 수정 요청 ---------- */
 function renderFixWhere(){
   const sel=$('#fix-where'), old=sel.value; sel.innerHTML='';
@@ -936,7 +1074,7 @@ function changed(i){
   save();
   if(i!=null){ const card=$('#scene-'+i); if(card) renderNotes(card,i); [i-1,i+1].forEach(j=>{ const p=$('#scene-'+j); if(p) renderNotes(p,j); }); }
   else state.scenes.forEach((_,j)=>{ const card=$('#scene-'+j); if(card) renderNotes(card,j); });
-  clearTimeout(outT); outT=setTimeout(()=>{ renderOutputs(); renderFixWhere(); renderFix(); },150);
+  clearTimeout(outT); outT=setTimeout(()=>{ renderOutputs(); renderBoard(); renderFixWhere(); renderFix(); },150);
 }
 
 $('#add-scene').addEventListener('click',()=>{
@@ -947,14 +1085,14 @@ $('#add-scene').addEventListener('click',()=>{
 });
 $('#reset').addEventListener('click',()=>{
   if(!confirm('입력한 내용을 모두 지우고 처음부터 시작할까요?')) return;
-  state={common:defCommon(),scenes:[normScene({},0,10)]}; renderAll(); changed();
+  state={common:defCommon(),scenes:[normScene({},0,10)],wiz:defWiz()}; renderAll(); changed();
 });
 document.querySelectorAll('[data-example]').forEach(b=>b.addEventListener('click',()=>{
   const hasWork = state.scenes.some(s=>s.cuts.some(c=>clean(c.action))) || clean(state.common.who);
   if(hasWork && !confirm('지금 입력한 내용 대신 예시로 채울까요?')) return;
   const ex=JSON.parse(JSON.stringify(EXAMPLES[+b.dataset.example]));
   const common=Object.assign(defCommon(),ex.common);
-  state={common,scenes:ex.scenes.map((s,i)=>normScene(s,i,common.len))};
+  state={common,scenes:ex.scenes.map((s,i)=>normScene(s,i,common.len)),wiz:state.wiz};
   renderAll(); changed(); toast('예시를 채웠어요. 마음대로 고쳐 보세요');
 }));
 
@@ -963,8 +1101,8 @@ let theme='light'; try{ theme=localStorage.getItem(KEY+'-theme')||'light'; }catc
 applyTheme(theme);
 $('#theme-btn').addEventListener('click',()=>{ theme = theme==='dark'?'light':'dark'; applyTheme(theme); try{ localStorage.setItem(KEY+'-theme',theme); }catch(e){} });
 
-function renderAll(){ renderCommon(); renderScenes(); }
-renderAll(); renderOutputs(); renderFixWhere();
+function renderAll(){ renderCommon(); renderWizard(); renderScenes(); }
+renderAll(); renderOutputs(); renderBoard(); renderFixWhere();
 })();
 </script>
 </body>
