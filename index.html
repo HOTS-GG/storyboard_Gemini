@@ -39,8 +39,20 @@ header.top h1{font-size:clamp(24px,4.5vw,34px);margin:0 0 6px;letter-spacing:-.0
 .home-hero{padding:40px 0 4px;text-align:center}
 .home-hero h1{font-size:clamp(26px,5vw,38px);margin:0 0 8px;letter-spacing:-.02em}
 .home-hero p{margin:0;color:var(--muted)}
-.home-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}
-@media (max-width:640px){.home-cards{grid-template-columns:1fr}}
+.home-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+@media (max-width:860px){.home-cards{grid-template-columns:1fr}}
+/* 음악 */
+.chip.multi[aria-pressed="true"] .chip-label::before{content:"✓ "}
+.lyric-tools{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}
+.lyric-legend{margin-top:8px;font-size:14px}
+.lyric-legend summary{cursor:pointer;color:var(--accent);font-weight:700}
+.lyric-legend code{font-size:12.5px;background:var(--code-bg);border-radius:4px;padding:0 4px}
+.song-card{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:14px;padding:16px;margin-bottom:16px}
+.song-disc{width:76px;height:76px;border-radius:50%;background:radial-gradient(circle,var(--surface) 0 12%,var(--accent) 13% 15%,var(--ink) 16% 100%);opacity:.9}
+.song-title{margin:0;font-size:18px}
+.song-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.song-meta span{font-size:13px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+@media (max-width:520px){.song-card{grid-template-columns:1fr}.song-disc{width:56px;height:56px}}
 .home-card{display:flex;flex-direction:column;gap:8px;text-align:left;text-decoration:none;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
 .home-card:hover{border-color:var(--accent);transform:translateY(-2px)}
 .home-card .emoji{font-size:44px;line-height:1}
@@ -188,7 +200,7 @@ footer{margin-top:48px;color:var(--muted);font-size:13px;text-align:center}
 @media print{
   body{background:#fff;color:#000}
   .topbar,nav.jump,.btn,#editor,#setup,#fix,details.terms,header .steps,
-  #p-avatar,#p-scenes,#p-cover,#p-fix,.ov-grid,.out-actions{display:none!important}
+  #p-avatar,#p-scenes,#p-cover,#p-fix,.ov-grid,.out-actions,#m-kind,#m-story,#m-sound,#m-fix{display:none!important}
   .card{box-shadow:none}.out{break-inside:avoid}
   body.print-board .wrap>*:not(.workspace){display:none!important}
   .workspace{display:block!important}#board{position:static!important;max-height:none!important;overflow:visible!important}
@@ -218,6 +230,13 @@ footer{margin-top:48px;color:var(--muted);font-size:13px;text-align:center}
       <ul><li>아바타 (나의 캐릭터)</li><li>일대기 장면 그림</li><li>자서전 표지 · 앨범 커버</li></ul>
       <span class="go">사진 만들러 가기 →</span>
     </a>
+    <a class="home-card" href="#music">
+      <span class="emoji">🎵</span>
+      <h2>음악 프롬프트 메이커</h2>
+      <p>교직 이야기로 노래나 배경음악을 만들어요.</p>
+      <ul><li>영상 배경음악 (연주곡)</li><li>나의 노래 · 앨범 타이틀곡</li><li>가사 쓰기 도우미</li></ul>
+      <span class="go">음악 만들러 가기 →</span>
+    </a>
     <a class="home-card" href="#video">
       <span class="emoji">🎬</span>
       <h2>동영상 프롬프트 메이커</h2>
@@ -229,9 +248,9 @@ footer{margin-top:48px;color:var(--muted);font-size:13px;text-align:center}
   <div class="flow">
     <span class="sub" style="color:var(--muted);font-size:14px">추천 순서</span>
     <div class="row">
-      <span class="step">① 사진으로 아바타·장면 만들기</span><span class="arrow">→</span>
-      <span class="step">② 마음에 드는 장면 그림 저장</span><span class="arrow">→</span>
-      <span class="step">③ 그 그림을 첫 장면으로 영상 만들기</span>
+      <span class="step">① 사진: 아바타·장면 그림</span><span class="arrow">→</span>
+      <span class="step">② 음악: 나의 노래·배경음악</span><span class="arrow">→</span>
+      <span class="step">③ 영상: 그림으로 시작해 음악을 입히기</span>
     </div>
   </div>
 </div>
@@ -309,6 +328,73 @@ footer{margin-top:48px;color:var(--muted);font-size:13px;text-align:center}
         <li><b>글자는 나중에</b>: 그림 속 한글은 틀리기 쉬워요. 그림만 만들고 제목은 한글·PPT에서 얹어요.</li>
         <li><b>실제 장소는 사진으로</b>: 우리 학교 건물은 Gemini가 찾아 그리지 못해요. 사람이 없는 건물 사진을 함께 첨부해요.</li>
         <li><b>학생 사진은 올리지 않아요</b>: 함께 나오는 학생은 "뒷모습"이나 "멀리 있는 학생들"로 적어요.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>입력한 내용은 이 브라우저에만 저장돼요. 다른 사람에게는 보이지 않아요.</footer>
+</div>
+</div>
+
+<!-- ===================== 음악 ===================== -->
+<div class="view" id="view-music" hidden>
+<div class="wrap">
+  <header class="top">
+    <h1>🎵 음악 프롬프트 메이커</h1>
+    <p>곡의 느낌을 고르면 Gemini가 잘 알아듣는 음악 프롬프트로 바꿔 드려요.</p>
+    <ol class="steps">
+      <li><b>1</b> 어떤 곡인지 고르기</li>
+      <li><b>2</b> 이야기·가사 적기</li>
+      <li><b>3</b> 장르·악기·빠르기 고르기</li>
+      <li><b>4</b> 프롬프트 복사 → Gemini에 붙여넣기</li>
+    </ol>
+  </header>
+  <nav class="jump" aria-label="바로가기">
+    <a href="#m-kind">① 어떤 곡</a>
+    <a href="#m-story">② 이야기·가사</a>
+    <a href="#m-sound">③ 소리</a>
+    <a href="#m-result">④ 프롬프트 받기</a>
+    <a href="#m-fix">⑤ 어색할 때</a>
+  </nav>
+
+  <section class="block" id="m-kind">
+    <h2><span class="num">1</span>어떤 곡을 만들까요?</h2>
+    <p class="lead">용도를 고르면 목소리 여부도 알맞게 정해져요. 바꿔도 돼요.</p>
+    <div class="card" id="m-kind-card"></div>
+  </section>
+
+  <section class="block" id="m-story">
+    <h2><span class="num">2</span>이야기·가사</h2>
+    <p class="lead">곡에 담을 이야기예요. 가사가 없는 연주곡도 이야기를 적으면 분위기를 더 잘 맞춰요.</p>
+    <div class="card" id="m-story-card"></div>
+  </section>
+
+  <section class="block" id="m-sound">
+    <h2><span class="num">3</span>소리</h2>
+    <p class="lead">음악 용어를 몰라도 괜찮아요. 쉬운 말로 고르면 영어 음악 용어로 바꿔서 넣어요.</p>
+    <div class="card" id="m-sound-card"></div>
+  </section>
+
+  <section class="block" id="m-result">
+    <h2><span class="num">4</span>프롬프트 받기</h2>
+    <p class="lead"><b>영어 프롬프트를 복사해서 쓰는 걸 추천해요.</b> 장르·악기 이름은 영어가 더 정확해요. 가사는 한국어 그대로 들어가요.</p>
+    <div id="m-song-card"></div>
+    <div id="m-output"></div>
+  </section>
+
+  <section class="block" id="m-fix">
+    <h2><span class="num">5</span>음악이 어색할 때</h2>
+    <p class="lead">어디가 이상한지 고르면 Gemini에 보낼 수정 요청 문장을 만들어 드려요. 음악이 나온 <b>같은 대화창</b>에 보내세요.</p>
+    <div class="card" id="m-fix-card"></div>
+    <div class="card">
+      <h3 style="margin:0 0 4px;font-size:17px">🎬 영상에 음악 입히기 (캡컷 등 편집 앱)</h3>
+      <ul class="tips">
+        <li><b>음악은 영상 아래 줄(트랙)에</b>: 영상을 다 붙인 뒤 음악을 맨 아래에 넣어요.</li>
+        <li><b>끝은 점점 작아지게</b>: 영상이 끝나는 곳에서 음악을 자르고, 마지막 2초가 점점 작아지게 해요. 편집 앱에서는 '페이드 아웃'이라는 이름이에요.</li>
+        <li><b>대사가 있으면 음악을 작게</b>: 대사가 나오는 구간만 음악 볼륨을 30~50%로 낮춰요.</li>
+        <li><b>음악이 짧으면</b>: 같은 곡을 두 번 이어 붙이고, 이음새에서 앞 곡이 작아지며 뒷곡이 커지게 0.5초 겹쳐요. 편집 앱에서는 '크로스페이드'라는 이름이에요.</li>
+        <li><b>가수·노래 이름은 넣지 않아요</b>: "○○처럼"이라고 쓰면 만들어지지 않을 수 있어요. 대신 장르·악기·분위기로 적어요.</li>
+        <li><b>밖에 공개할 때</b>: AI로 만든 음악이라고 밝히고, 올리는 곳(유튜브 등)의 규칙을 확인해요.</li>
       </ul>
     </div>
   </section>
@@ -438,6 +524,7 @@ footer{margin-top:48px;color:var(--muted);font-size:13px;text-align:center}
       <button class="btn small" type="button" id="copy-all">📋 영어 프롬프트 전체 복사</button>
       <button class="btn small" type="button" id="download">💾 텍스트 파일로 저장</button>
       <button class="btn small" type="button" onclick="window.print()">🖨 인쇄</button>
+      <button class="btn small" type="button" id="to-music">🎵 이 영상에 어울리는 음악 만들기</button>
     </div>
     <div id="outputs"></div>
   </section>
@@ -1307,8 +1394,26 @@ window.VideoMaker = {
     const c0=state.scenes[0].cuts[0];
     if(c0.shot!=='photo') c0.shot='photo';
     renderAll(); changed();
+  },
+  // 음악 메이커에서 쓰는 영상 요약
+  summary(){
+    const c=state.common, m=pick('mood');
+    return {
+      seconds: state.scenes.length*c.len,
+      moodId: c.mood, moodText: m.kp,
+      story: [clean(c.who), clean(c.place)].filter(Boolean).join(', ')
+        + (state.scenes.some(s=>clean(s.endState)) ? ' — ' + state.scenes.map(s=>clean(s.endState)).filter(Boolean).join(' → ') : ''),
+      hasDialogue: state.scenes.some(s=>s.cuts.some(ct=>clean(ct.line)))
+    };
   }
 };
+$('#to-music').addEventListener('click',()=>{
+  if(!window.MusicMaker) return;
+  if(!confirm('이 영상의 길이·분위기·이야기를 음악 메이커에 넣을까요?\n(음악 메이커의 장르·악기 선택은 그대로 남아요)')) return;
+  window.MusicMaker.fromVideo(window.VideoMaker.summary());
+  window.goView('music');
+  setTimeout(()=>toast('영상에 맞춰 배경음악 설정을 채웠어요'),300);
+});
 })();
 </script>
 
@@ -1693,8 +1798,20 @@ function renderOutputs(){
         it.ratio!=='16:9' ? el('span',{class:'sub',style:'color:var(--warn);font-size:13.5px',text:'영상 첫 장면으로 쓸 거면 비율을 16:9로 바꿔 주세요.'}) : null
       ]));
     }
+    if(it.kind==='cover'){
+      card.appendChild(el('div',{class:'out-actions'},[
+        el('button',{type:'button',class:'btn small',text:'🎵 이 표지로 앨범 곡 만들기',onclick(){ toMusic(); }})
+      ]));
+    }
     box.appendChild(card);
   });
+}
+function toMusic(){
+  const v=state.cover;
+  if(!confirm('표지의 제목·분위기를 음악 메이커에 넣을까요?\n(음악 메이커의 장르·악기 선택은 그대로 남아요)')) return;
+  window.MusicMaker.fromCover({title:T(v.title), mood:val(v,'mood'), photoDesc:(val(v,'kind')||'표지')+(T(v.title)?' 「'+T(v.title)+'」':'')});
+  window.goView('music');
+  setTimeout(()=>VM.toast('표지에 맞춰 앨범 곡 설정을 채웠어요'),300);
 }
 function renderOverview(){
   const box=$id('p-overview'); box.innerHTML='';
@@ -1805,9 +1922,442 @@ $id('p-download').addEventListener('click',()=>{
 renderAvatar(); renderScenes(); renderCover(); renderWarns(); renderOverview(); renderOutputs(); updateFix();
 })();
 
+/* ===================== 음악 프롬프트 메이커 ===================== */
+(function(){
+"use strict";
+const KEY='musicPromptMaker.v1';
+const CUSTOM='custom';
+const VM=window.VideoMaker;
+
+/* ---------- 선택지 (ko: 버튼 글자, en: 영어 프롬프트, kp: 한국어 프롬프트) ---------- */
+const PURPOSES=[
+  {id:'bgm',ko:'🎬 영상 배경음악',hint:'영상 아래에 깔 연주곡',vocal:'inst',
+   en:'background music for a short video about a teacher\'s life',kp:'교사의 삶을 담은 짧은 영상의 배경음악'},
+  {id:'song',ko:'🎤 나의 노래',hint:'교직 이야기를 가사로',vocal:'vocal',
+   en:'a personal song about a teacher\'s life and memories',kp:'교사의 삶과 추억을 담은 나만의 노래'},
+  {id:'album',ko:'💿 앨범 타이틀곡',hint:'앨범 커버와 함께',vocal:'vocal',
+   en:'the title track of a personal album about a teacher\'s career',kp:'교직 인생을 담은 앨범의 타이틀곡'}
+];
+const VOCALS=[
+  {id:'inst',ko:'연주곡',hint:'목소리 없음'},
+  {id:'vocal',ko:'노래',hint:'가사 있음'},
+  {id:'hum',ko:'허밍만',hint:'가사 없이 "음~"'}
+];
+const GENRES=[
+  {id:'ballad',ko:'발라드',en:'emotional Korean ballad',kp:'감성 발라드'},
+  {id:'acoustic',ko:'어쿠스틱 포크',en:'warm acoustic folk',kp:'따뜻한 어쿠스틱 포크'},
+  {id:'piano',ko:'피아노 솔로',en:'solo piano piece',kp:'피아노 독주곡'},
+  {id:'classical',ko:'클래식 실내악',hint:'바이올린·첼로 작은 합주',en:'classical chamber music',kp:'클래식 실내악'},
+  {id:'cinematic',ko:'영화 음악',hint:'웅장한 오케스트라',en:'cinematic orchestral score',kp:'영화 음악 같은 오케스트라'},
+  {id:'lofi',ko:'로파이',hint:'편안한 공부 음악 느낌',en:'lo-fi chill beats',kp:'잔잔한 로파이'},
+  {id:'citypop',ko:'시티팝',hint:'80년대 도시 감성 가요',en:'Korean city pop',kp:'시티팝'},
+  {id:'band',ko:'밴드 록',en:'uplifting band rock',kp:'힘찬 밴드 록'},
+  {id:'kids',ko:'동요',en:'bright children\'s song',kp:'밝은 동요'},
+  {id:'gugak',ko:'국악 퓨전',hint:'전통 악기 + 요즘 반주',en:'Korean traditional fusion (gugak) with a modern arrangement',kp:'현대적으로 편곡한 국악 퓨전'},
+  {id:'jazz',ko:'재즈',en:'soft jazz',kp:'부드러운 재즈'}
+];
+const MOODS=[
+  {id:'warm',ko:'따뜻한',en:'warm and tender',kp:'따뜻하고 다정한'},
+  {id:'moving',ko:'뭉클한',en:'emotional and moving',kp:'뭉클하고 감동적인'},
+  {id:'hope',ko:'희망찬',en:'hopeful and uplifting',kp:'희망찬'},
+  {id:'calm',ko:'잔잔한',en:'calm and peaceful',kp:'잔잔하고 고요한'},
+  {id:'nostal',ko:'그리운',en:'nostalgic and wistful',kp:'그립고 아련한'},
+  {id:'flutter',ko:'설레는',en:'bright and fluttering',kp:'설레는'},
+  {id:'grand',ko:'웅장한',en:'grand and inspiring',kp:'웅장한'},
+  {id:'cheer',ko:'경쾌한',en:'cheerful and lively',kp:'경쾌하고 신나는'}
+];
+const INSTRUMENTS=[
+  {id:'piano',ko:'피아노',en:'piano'},{id:'aguitar',ko:'어쿠스틱 기타',en:'acoustic guitar'},
+  {id:'cello',ko:'첼로',en:'cello'},{id:'violin',ko:'바이올린',en:'violin'},
+  {id:'strings',ko:'현악 합주',en:'string ensemble'},{id:'flute',ko:'플루트',en:'flute'},
+  {id:'musicbox',ko:'오르골',en:'music box'},{id:'drums',ko:'부드러운 드럼',en:'soft brushed drums'},
+  {id:'synth',ko:'신시사이저',en:'warm synth pads'},{id:'gayageum',ko:'가야금',en:'gayageum'},
+  {id:'haegeum',ko:'해금',en:'haegeum'},{id:'daegeum',ko:'대금',en:'daegeum'}
+];
+const VOICES=[
+  {id:'female',ko:'여성',en:'female vocal',kp:'여성 보컬'},
+  {id:'male',ko:'남성',en:'male vocal',kp:'남성 보컬'},
+  {id:'duet',ko:'남녀 듀엣',en:'male and female duet',kp:'남녀 듀엣'},
+  {id:'kids',ko:'어린이 합창',en:'children\'s choir',kp:'어린이 합창'},
+  {id:'choir',ko:'혼성 합창',en:'mixed choir',kp:'혼성 합창'}
+];
+const TONES=[
+  {id:'soft',ko:'맑고 부드러운',en:'clear and soft',kp:'맑고 부드러운'},
+  {id:'warmlow',ko:'따뜻한 중저음',en:'warm and low',kp:'따뜻한 중저음의'},
+  {id:'husky',ko:'허스키한',en:'slightly husky',kp:'살짝 허스키한'},
+  {id:'power',ko:'힘 있는',en:'powerful',kp:'힘 있는'}
+];
+const TEMPOS=[
+  {id:'vslow',ko:'아주 느리게',hint:'60 BPM',en:'very slow tempo (about 60 BPM)',kp:'아주 느린 빠르기(약 60 BPM)'},
+  {id:'slow',ko:'느리게',hint:'75 BPM',en:'slow tempo (about 75 BPM)',kp:'느린 빠르기(약 75 BPM)'},
+  {id:'mid',ko:'보통',hint:'95 BPM',en:'moderate tempo (about 95 BPM)',kp:'보통 빠르기(약 95 BPM)'},
+  {id:'fast',ko:'빠르게',hint:'120 BPM',en:'upbeat tempo (about 120 BPM)',kp:'빠른 빠르기(약 120 BPM)'}
+];
+const FLOWS=[
+  {id:'build',ko:'잔잔하게 시작해 점점 커지기',en:'starts quietly and gradually builds to an emotional climax',kp:'잔잔하게 시작해서 점점 커지며 감정이 가장 큰 순간에 이르게'},
+  {id:'steady',ko:'처음부터 끝까지 잔잔하게',en:'stays gentle and steady from start to finish',kp:'처음부터 끝까지 잔잔하고 일정하게'},
+  {id:'bright2moving',ko:'밝게 시작해 뭉클하게 끝나기',en:'starts bright and ends with a warm, touching finale',kp:'밝게 시작해서 뭉클하고 따뜻하게 끝나게'},
+  {id:'climaxfade',ko:'크게 터진 뒤 조용히 끝나기',en:'reaches a big climax and then fades out softly',kp:'크게 터진 뒤 조용히 잦아들며 끝나게'}
+];
+const LENGTHS=[{id:30,ko:'30초'},{id:60,ko:'1분'},{id:120,ko:'2분'}];
+const KEYWORDS=['분필','칠판','출석부','첫 발령','교실 창가','운동장','아이들 웃음소리','졸업식','손편지','벚꽃','퇴근길','마지막 수업'];
+const LANGS=[{id:'ko',ko:'한국어',en:'Korean',kp:'한국어'},{id:'en',ko:'영어',en:'English',kp:'영어'}];
+// 가사 칸 표시: 버튼에는 쉬운 말, 가사에는 AI가 알아듣는 영어 표시가 들어감
+const TAGS=[
+  {ko:'시작',tag:'[Intro]',desc:'노래가 시작되는 짧은 부분. 비워 두면 악기 연주로 시작해요.'},
+  {ko:'이야기',tag:'[Verse]',desc:'상황과 이야기를 풀어 가는 부분. 1절·2절마다 가사가 달라요.'},
+  {ko:'후렴',tag:'[Chorus]',desc:'가장 기억에 남는, 여러 번 되풀이되는 부분. 제목이나 꼭 넣고 싶은 한 줄을 여기에.'},
+  {ko:'분위기 바꾸기',tag:'[Bridge]',desc:'마지막 후렴 앞에서 한 번 느낌을 바꾸는 부분. 짧은 노래에서는 빼도 돼요.'},
+  {ko:'끝맺음',tag:'[Outro]',desc:'노래를 조용히 마무리하는 부분.'}
+];
+const byId=(arr,id)=>arr.find(o=>o.id===id)||arr[0];
+
+/* ---------- 상태 ---------- */
+function blank(){ return {purpose:'bgm',vocal:'inst',title:'',theme:'',story:'',keywords:[],lyricsMode:'ai',hook:'',lyrics:'',lang:'ko',
+  genre:'piano',genreCustom:'',mood:'warm',moodCustom:'',instruments:['piano','cello'],instCustom:'',voice:'female',tone:'soft',
+  tempo:'slow',flow:'build',length:30,photo:false,photoDesc:'',fix:[]}; }
+let state=null;
+try{ state=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
+state=Object.assign(blank(),state||{});
+['keywords','instruments','fix'].forEach(k=>{ if(!Array.isArray(state[k])) state[k]=[]; });
+let saveT; function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} },300); }
+
+/* ---------- 도우미 ---------- */
+const $id=id=>document.getElementById(id);
+function el(tag,attrs,kids){ const e=document.createElement(tag); attrs=attrs||{};
+  Object.keys(attrs).forEach(k=>{
+    if(k==='class') e.className=attrs[k]; else if(k==='html') e.innerHTML=attrs[k]; else if(k==='text') e.textContent=attrs[k];
+    else if(k.slice(0,2)==='on') e.addEventListener(k.slice(2),attrs[k]); else e.setAttribute(k,attrs[k]); });
+  (kids||[]).forEach(c=>{ if(c==null) return; e.appendChild(typeof c==='string'?document.createTextNode(c):c); });
+  return e; }
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+const T=s=>(s||'').trim();
+const clean=s=>T(s).replace(/[.。]+$/,'');
+function field(label,hint,body){ return el('div',{class:'field'},[el('span',{class:'label'},[label,hint?el('span',{class:'sub',text:hint}):null]),body]); }
+function chipBtn(o,pressed,multi){
+  const b=el('button',{type:'button',class:'chip pill'+(multi?' multi':''),'aria-pressed':String(pressed)});
+  b.innerHTML=`<span class="chip-label">${esc(o.ko)}</span>`+(o.hint?`<span class="chip-hint">· ${esc(o.hint)}</span>`:'');
+  return b; }
+// 하나 고르기 (custom: 직접 입력 칸을 붙임)
+function pickOne(key,opts,cfg){ cfg=cfg||{};
+  const wrap=el('div'), row=el('div',{class:'chips'}); let inp=null;
+  const list=cfg.custom?opts.concat([{id:CUSTOM,ko:'✏️ 직접 입력'}]):opts;
+  list.forEach(o=>{ const b=chipBtn(o,state[key]===o.id);
+    b.addEventListener('click',()=>{ state[key]=o.id; [...row.children].forEach(c=>c.setAttribute('aria-pressed','false')); b.setAttribute('aria-pressed','true');
+      if(inp){ inp.classList.toggle('hidden',o.id!==CUSTOM); if(o.id===CUSTOM) inp.focus(); }
+      if(cfg.onpick) cfg.onpick(o); update(); });
+    row.appendChild(b); });
+  wrap.appendChild(row);
+  if(cfg.custom){ inp=el('input',{type:'text',class:'custom-in',placeholder:cfg.ph||'직접 적어 주세요'}); inp.value=state[key+'Custom']||'';
+    inp.classList.toggle('hidden',state[key]!==CUSTOM); inp.addEventListener('input',()=>{ state[key+'Custom']=inp.value; update(); }); wrap.appendChild(inp); }
+  return wrap; }
+// 여러 개 고르기
+function pickMany(key,opts){
+  const row=el('div',{class:'chips'});
+  opts.forEach(o=>{ const id=o.id||o, label=o.ko||o; const b=chipBtn({ko:label},state[key].includes(id),true);
+    b.addEventListener('click',()=>{ const i=state[key].indexOf(id); if(i>=0) state[key].splice(i,1); else state[key].push(id); b.setAttribute('aria-pressed',String(i<0)); update(); });
+    row.appendChild(b); });
+  return row; }
+// 직접 입력 칸 + 넣기 버튼 (엔터로도 넣기)
+function addRow(ph,btnText,onAdd){
+  const inp=el('input',{type:'text',placeholder:ph,style:'flex:1;min-width:160px'});
+  const go=()=>{ const v=T(inp.value).replace(/[\[\]]/g,''); if(!v){ inp.focus(); return; } onAdd(v); inp.value=''; };
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); go(); } });
+  return el('div',{class:'row custom-in'},[inp,el('button',{type:'button',class:'btn small',text:btnText,onclick:go})]); }
+// 떠오르는 낱말: 기본 낱말 + 내가 추가한 낱말
+function keywordPicker(){
+  const box=el('div');
+  const draw=()=>{ box.innerHTML='';
+    const mine=state.keywords.filter(k=>!KEYWORDS.includes(k));
+    box.appendChild(pickMany('keywords',KEYWORDS.concat(mine)));
+    box.appendChild(addRow('예: 교무실 커피, 첫 제자 이름','✏️ 낱말 추가',v=>{ if(!state.keywords.includes(v)) state.keywords.push(v); draw(); update(); }));
+    if(mine.length) box.appendChild(el('p',{class:'sub',style:'margin:6px 0 0;color:var(--muted);font-size:13px',text:'추가한 낱말을 다시 누르면 빠져요. 빠진 낱말은 새로고침하면 사라져요.'}));
+  };
+  draw(); return box; }
+function textIn(key,ph,multi){
+  const e=el(multi?'textarea':'input',multi?{placeholder:ph}:{type:'text',placeholder:ph}); e.value=state[key]||'';
+  e.addEventListener('input',()=>{ state[key]=e.value; update(); }); return e; }
+function notes(box,list){ if(box) box.innerHTML=list.map(([t,m])=>`<div class="note ${t}">${t==='warn'?'⚠️ ':'💡 '}${m}</div>`).join(''); }
+function custom(arr,key){ return state[key]===CUSTOM ? (T(state[key+'Custom'])?{ko:T(state[key+'Custom']),en:T(state[key+'Custom']),kp:T(state[key+'Custom'])}:arr[0]) : byId(arr,state[key]); }
+const sung=()=>state.vocal==='vocal';
+
+/* ---------- ① 어떤 곡 ---------- */
+function renderKind(){
+  const c=$id('m-kind-card'); c.innerHTML='';
+  const ex=el('div',{class:'row',style:'margin-bottom:14px'},[el('span',{style:'font-weight:700',text:'예시로 채워 보기:'})]);
+  EXAMPLES.forEach(x=>ex.appendChild(el('button',{type:'button',class:'btn small',text:x.name,onclick(){
+    if((T(state.story)||T(state.lyrics))&&!confirm('지금 입력한 내용 대신 예시로 채울까요?')) return;
+    state=Object.assign(blank(),JSON.parse(JSON.stringify(x.data))); renderAll(); update(); VM.toast('예시를 채웠어요. 마음대로 고쳐 보세요'); }})));
+  ex.appendChild(el('button',{type:'button',class:'btn small',text:'🎬 동영상 메이커에서 불러오기',onclick(){
+    if(!confirm('동영상 메이커의 길이·분위기·이야기를 가져올까요?')) return; fromVideo(VM.summary()); VM.toast('영상에 맞춰 채웠어요'); }}));
+  c.appendChild(ex);
+  c.appendChild(field('용도',null,pickOne('purpose',PURPOSES,{custom:true,ph:'예: 학교 축제 여는 음악, 학급 단체곡',onpick(o){ if(o.vocal){ state.vocal=o.vocal; renderKind(); renderStory(); renderSound(); } }})));
+  c.appendChild(field('목소리',null,pickOne('vocal',VOCALS,{onpick(){ renderStory(); renderSound(); }})));
+  c.appendChild(field('곡 제목','없으면 비워 두기',textIn('title','예: 분필 가루와 함께한 서른두 해')));
+  c.appendChild(field('길이','영상 배경음악이면 영상 길이에 가깝게',pickOne('length',LENGTHS)));
+  const cb=el('input',{type:'checkbox'}); cb.checked=!!state.photo;
+  const pd=field('그림 설명','짧게',textIn('photoDesc','예: 노을 진 교실에 선 선생님 그림 (앨범 커버)'));
+  pd.classList.toggle('hidden',!state.photo);
+  cb.addEventListener('change',()=>{ state.photo=cb.checked; pd.classList.toggle('hidden',!state.photo); update(); });
+  c.appendChild(el('div',{class:'field'},[el('label',{class:'check'},[cb,el('span',{html:'<b>그림을 함께 올려서 분위기 맞추기</b><br><span class="sub" style="margin:0">사진 메이커로 만든 장면 그림이나 앨범 커버를 함께 올리면 그 분위기에 어울리는 곡을 만들어요. <a href="#photo">🖼️ 사진 만들러 가기</a></span>'})])]));
+  c.appendChild(pd);
+  c.appendChild(el('div',{class:'notes',id:'m-kind-notes'}));
+}
+
+/* ---------- ② 이야기·가사 ---------- */
+function renderStory(){
+  const c=$id('m-story-card'); c.innerHTML='';
+  c.appendChild(field('주제 한 줄',null,textIn('theme','예: 교직에 남는 순간')));
+  c.appendChild(field('담고 싶은 이야기','기억나는 장면이나 마음을 편하게 적어요',textIn('story','예: 첫 발령 날 떨리던 마음, 졸업식 날 받은 손편지, 그래도 이 자리에 남은 이유',true)));
+  c.appendChild(field('떠오르는 낱말','여러 개 고를 수 있어요',keywordPicker()));
+  if(sung()){
+    const g=el('div',{class:'sub-group'},[el('p',{class:'sub-title',text:'✍️ 가사'})]);
+    g.appendChild(field('가사는 누가 쓸까요?',null,pickOne('lyricsMode',[{id:'ai',ko:'Gemini가 쓰기',hint:'이야기를 바탕으로'},{id:'mine',ko:'내가 쓴 가사 넣기'}],{onpick(){ renderStory(); }})));
+    g.appendChild(field('가사 언어',null,pickOne('lang',LANGS)));
+    if(state.lyricsMode==='ai'){
+      g.appendChild(field('후렴에 꼭 넣고 싶은 한 줄','없으면 비워 두기',textIn('hook','예: 그래도 나는 이 교실에 남았네')));
+    } else {
+      const ta=textIn('lyrics','[Verse]\n첫 발령 날 떨리던 손으로\n출석부를 처음 펼치던 날\n\n[Chorus]\n그래도 나는 이 교실에 남았네',true);
+      ta.style.minHeight='180px';
+      const tools=el('div',{class:'lyric-tools'},[el('span',{class:'sub',style:'color:var(--muted);font-size:13.5px;align-self:center',text:'칸 넣기:'})]);
+      // 커서 자리에 칸 표시 넣기
+      const insertTag=tag=>{
+        const s=ta.selectionStart, v=ta.value, ins=(s>0&&v[s-1]!=='\n'?'\n\n':'')+tag+'\n';
+        ta.value=v.slice(0,s)+ins+v.slice(s); ta.focus(); ta.selectionStart=ta.selectionEnd=s+ins.length; state.lyrics=ta.value; update(); };
+      TAGS.forEach(t=>tools.appendChild(el('button',{type:'button',class:'btn small',text:'＋ '+t.ko,title:t.desc,onclick(){ insertTag(t.tag); }})));
+      const customTag=addRow('예: 선생님 대사, 아이들 합창, 2절 이야기','넣기',v=>{ insertTag('['+v+']'); customTag.classList.add('hidden'); });
+      customTag.classList.add('hidden');
+      tools.appendChild(el('button',{type:'button',class:'btn small',text:'✏️ 직접 입력',title:'내가 이름을 붙인 칸을 넣어요',onclick(){
+        customTag.classList.toggle('hidden'); if(!customTag.classList.contains('hidden')) customTag.querySelector('input').focus(); }}));
+      tools.appendChild(customTag);
+      customTag.style.flexBasis='100%';
+      const legend=el('details',{class:'lyric-legend'},[
+        el('summary',{text:'칸 이름이 무슨 뜻인가요?'}),
+        el('ul',{class:'tips'},TAGS.map(t=>el('li',{html:`<b>${esc(t.ko)}</b> <code>${esc(t.tag)}</code>: ${esc(t.desc)}`}))),
+        el('p',{class:'sub',style:'margin:8px 0 0;color:var(--muted);font-size:13.5px',html:'버튼을 누르면 가사 칸에 <code>[Verse]</code> 같은 영어 표시가 들어가요. AI가 노래의 어느 부분인지 알아보는 표시라 그대로 두면 돼요. <b>✏️ 직접 입력</b>으로 "[선생님 대사]", "[아이들 합창]"처럼 우리말 칸 이름을 붙여도 돼요.<br><b>30초 노래</b>는 이야기 1번 + 후렴 1번이면 충분하고, <b>1분 이상</b>이면 이야기 → 후렴 → 이야기 → 후렴 순서가 좋아요.'})
+      ]);
+      g.appendChild(field('가사','칸을 나눠 두면 어디를 후렴으로 부를지 더 잘 알아들어요',el('div',{},[tools,ta,legend])));
+    }
+    c.appendChild(g);
+  }
+  c.appendChild(el('div',{class:'notes',id:'m-story-notes'}));
+}
+
+/* ---------- ③ 소리 ---------- */
+function renderSound(){
+  const c=$id('m-sound-card'); c.innerHTML='';
+  c.appendChild(field('장르',null,pickOne('genre',GENRES,{custom:true,ph:'예: 잔잔한 보사노바'})));
+  c.appendChild(field('분위기',null,pickOne('mood',MOODS,{custom:true,ph:'예: 담담하지만 마음 한구석이 뭉클한'})));
+  c.appendChild(field('악기','여러 개 고를 수 있어요. 2~3개가 가장 잘 어울려요',el('div',{},[pickMany('instruments',INSTRUMENTS),
+    (()=>{ const i=textIn('instCustom','그 밖의 악기 (예: 하모니카, 실로폰)'); i.classList.add('custom-in'); return i; })()])));
+  if(state.vocal!=='inst'){
+    const g=el('div',{class:'sub-group'},[el('p',{class:'sub-title',text:'🎤 목소리'})]);
+    g.appendChild(field('누가 부를까요?',null,pickOne('voice',VOICES,{custom:true,ph:'예: 굵고 낮은 남성 목소리, 선생님과 학생이 주고받는 노래'})));
+    g.appendChild(field('음색',null,pickOne('tone',TONES,{custom:true,ph:'예: 속삭이듯 조용한'})));
+    c.appendChild(g);
+  }
+  const g2=el('div',{class:'sub-group'},[el('p',{class:'sub-title',text:'⏱ 빠르기 · 흐름'})]);
+  g2.appendChild(field('빠르기','BPM은 1분에 몇 박인지예요. 걷는 빠르기가 약 100이에요',pickOne('tempo',TEMPOS,{custom:true,ph:'예: 느리게 시작해서 후렴부터 조금 빨라지게'})));
+  g2.appendChild(field('곡의 흐름',null,pickOne('flow',FLOWS,{custom:true,ph:'예: 피아노만으로 시작해서 후렴에 현악기가 들어오게'})));
+  c.appendChild(g2);
+  c.appendChild(el('div',{class:'notes',id:'m-sound-notes'}));
+}
+
+/* ---------- 프롬프트 ---------- */
+function instList(lang){
+  const list=state.instruments.map(id=>byId(INSTRUMENTS,id)).map(o=>lang==='en'?o.en:o.ko);
+  if(T(state.instCustom)) list.push(T(state.instCustom));
+  return list; }
+function lenText(lang){ const s=state.length; return lang==='en' ? (s<60?`${s}-second`:`${s/60}-minute`) : (s<60?`${s}초`:`${s/60}분`); }
+function storyBits(){ return {theme:clean(state.theme), story:clean(state.story), kw:state.keywords.slice()}; }
+
+function buildEn(){
+  const p=custom(PURPOSES,'purpose'), g=custom(GENRES,'genre'), m=custom(MOODS,'mood'), t=custom(TEMPOS,'tempo'), f=custom(FLOWS,'flow');
+  const b=storyBits(), L=[];
+  const kind = state.vocal==='inst'?'instrumental track':state.vocal==='hum'?'track with wordless humming':'song with vocals';
+  L.push(`Create a ${lenText('en')} ${kind} — ${p.en}.`);
+  if(state.photo) L.push(`Use the attached image as inspiration for the mood${T(state.photoDesc)?` (the image shows: ${clean(state.photoDesc)})`:''}.`);
+  if(T(state.title)) L.push(`Title: "${T(state.title)}".`);
+  L.push('');
+  if(b.theme) L.push(`Theme: ${b.theme}.`);
+  if(b.story) L.push(`Story: ${b.story}.`);
+  if(b.kw.length) L.push(`Imagery: ${b.kw.join(', ')}.`);
+  L.push(`Genre: ${g.en}.`);
+  L.push(`Mood: ${m.en}.`);
+  L.push(`Tempo: ${t.en}.`);
+  const inst=instList('en'); if(inst.length) L.push(`Instruments: ${inst.join(', ')}.`);
+  if(state.vocal==='inst') L.push('Vocals: none, purely instrumental.');
+  else if(state.vocal==='hum') L.push(`Vocals: ${custom(TONES,'tone').en} ${custom(VOICES,'voice').en}, wordless humming and soft "oohs" only, no lyrics.`);
+  else L.push(`Vocals: ${custom(TONES,'tone').en} ${custom(VOICES,'voice').en}, singing in ${byId(LANGS,state.lang).en} with clear pronunciation.`);
+  L.push(`Structure: ${f.en}.`);
+  if(state.purpose==='bgm') L.push('Keep it subtle so it does not overpower dialogue or sound effects, with a clean ending that can fade out.');
+  if(sung()){
+    if(state.lyricsMode==='mine' && T(state.lyrics)) { L.push(''); L.push(`Lyrics (${byId(LANGS,state.lang).en}, sing exactly as written; words in square brackets are section labels, do not sing them):`); L.push(T(state.lyrics)); }
+    else L.push(`Lyrics: write original ${byId(LANGS,state.lang).en} lyrics based on the theme and story above${T(state.hook)?`, and include this line in the chorus: "${T(state.hook)}"`:''}. Keep them short enough to fit the length, with a chorus that is easy to remember.`);
+  }
+  L.push('');
+  L.push('Do not imitate any specific existing song or artist.');
+  return L.join('\n'); }
+
+function buildKo(){
+  const p=custom(PURPOSES,'purpose'), g=custom(GENRES,'genre'), m=custom(MOODS,'mood'), t=custom(TEMPOS,'tempo'), f=custom(FLOWS,'flow');
+  const b=storyBits(), L=[];
+  const kind = state.vocal==='inst'?'연주곡을':state.vocal==='hum'?'허밍이 들어간 곡을':'노래를';
+  L.push(`${lenText('ko')} 길이의 ${kind} 만들어 줘. 용도: ${p.kp}.`);
+  if(state.photo) L.push(`첨부한 그림의 분위기에 어울리게 만들어 줘${T(state.photoDesc)?` (그림 내용: ${clean(state.photoDesc)})`:''}.`);
+  if(T(state.title)) L.push(`제목: "${T(state.title)}"`);
+  L.push('');
+  if(b.theme) L.push(`주제: ${b.theme}.`);
+  if(b.story) L.push(`이야기: ${b.story}.`);
+  if(b.kw.length) L.push(`떠오르는 낱말: ${b.kw.join(', ')}.`);
+  L.push(`장르: ${g.kp}.`);
+  L.push(`분위기: ${m.kp}.`);
+  L.push(`빠르기: ${t.kp}.`);
+  const inst=instList('ko'); if(inst.length) L.push(`악기: ${inst.join(', ')}.`);
+  if(state.vocal==='inst') L.push('목소리: 없이 악기 연주만.');
+  else if(state.vocal==='hum') L.push(`목소리: ${custom(TONES,'tone').kp} ${custom(VOICES,'voice').kp}의 허밍만, 가사 없이.`);
+  else L.push(`목소리: ${custom(TONES,'tone').kp} ${custom(VOICES,'voice').kp}, ${byId(LANGS,state.lang).kp} 가사를 또렷한 발음으로.`);
+  L.push(`곡의 흐름: ${f.kp}.`);
+  if(state.purpose==='bgm') L.push('대사나 효과음을 덮지 않도록 은은하게, 끝은 자연스럽게 줄어들 수 있게.');
+  if(sung()){
+    if(state.lyricsMode==='mine' && T(state.lyrics)) { L.push(''); L.push('가사 (적힌 그대로 불러 줘. [ ] 안의 영어는 노래 부분 이름이니 부르지 마):'); L.push(T(state.lyrics)); }
+    else L.push(`가사: 위의 주제와 이야기를 바탕으로 ${byId(LANGS,state.lang).kp} 가사를 새로 써 줘${T(state.hook)?`. 후렴에 "${T(state.hook)}"를 꼭 넣어 줘`:''}. 길이에 맞게 짧게, 후렴은 한 번 들으면 기억나게.`);
+  }
+  L.push('');
+  L.push('실제로 있는 노래나 가수를 따라 하지 말고 새로운 곡으로 만들어 줘.');
+  return L.join('\n'); }
+
+function howTo(){
+  return '<b>Gemini에서 이렇게 하세요</b><ol>'
+    +'<li>Gemini에서 <b>음악 만들기</b>를 골라요. (도구 메뉴에 있어요. 메뉴 이름은 버전에 따라 조금 다를 수 있어요)</li>'
+    +(state.photo?'<li><b>+ 버튼</b>으로 사진 메이커에서 만든 그림을 올려요.</li>':'')
+    +'<li>아래 프롬프트를 붙여 넣고 보내요.</li>'
+    +'<li>마음에 들면 <b>다운로드</b>해요. 영상에 입히는 방법은 아래 ⑤에 있어요.</li></ol>'; }
+
+function renderSongCard(){
+  const g=custom(GENRES,'genre'), m=custom(MOODS,'mood'), t=custom(TEMPOS,'tempo'), p=custom(PURPOSES,'purpose');
+  const vName=custom(VOICES,'voice').ko, vMine=state.voice===CUSTOM;
+  const voice = state.vocal==='inst'?'연주곡':state.vocal==='hum'?`${vName} 허밍`:(vMine?vName:`${vName} 보컬`);
+  const meta=[state.purpose===CUSTOM?p.ko:p.ko.replace(/^\S+\s/,''),g.ko,m.ko,t.hint?`${t.ko} (${t.hint})`:t.ko,voice,lenText('ko')].concat(instList('ko'));
+  $id('m-song-card').innerHTML=`<div class="song-card"><div class="song-disc" aria-hidden="true"></div><div>
+    <p class="song-title">${esc(T(state.title)||'제목 없는 곡')}</p>
+    <div class="ov-sum" style="margin-top:2px">${esc(T(state.theme)||'주제를 적으면 여기에 보여요')}</div>
+    <div class="song-meta">${meta.map(x=>`<span>${esc(x)}</span>`).join('')}</div></div></div>`;
+}
+function renderOutput(){
+  const box=$id('m-output'); box.innerHTML='';
+  const en=buildEn(), ko=buildKo();
+  const card=el('div',{class:'card out'});
+  card.innerHTML=`<div class="how">${howTo()}</div>
+    <div class="prompts">
+      <div class="pbox"><div class="pbox-head"><strong>English</strong><span class="badge">복사 추천</span><span class="spacer"></span><button class="btn small" type="button" data-copy="en">복사</button></div><pre></pre></div>
+      <div class="pbox"><div class="pbox-head"><strong>한국어</strong><span class="tag">내용 확인용</span><span class="spacer"></span><button class="btn small" type="button" data-copy="ko">복사</button></div><pre></pre></div>
+    </div>
+    <div class="out-actions"><button class="btn small" type="button" data-act="dl">💾 텍스트 파일로 저장</button><button class="btn small" type="button" data-act="video">🎬 영상 만들러 가기</button></div>`;
+  const pres=card.querySelectorAll('pre'); pres[0].textContent=en; pres[1].textContent=ko;
+  card.querySelector('[data-copy="en"]').addEventListener('click',()=>VM.copy(en));
+  card.querySelector('[data-copy="ko"]').addEventListener('click',()=>VM.copy(ko));
+  card.querySelector('[data-act="video"]').addEventListener('click',()=>window.goView('video'));
+  card.querySelector('[data-act="dl"]').addEventListener('click',()=>{
+    const a=el('a',{href:URL.createObjectURL(new Blob(['﻿[음악 프롬프트]\n\n### English\n\n'+en+'\n\n\n### 한국어\n\n'+ko+'\n'],{type:'text/plain;charset=utf-8'})),download:'음악_프롬프트.txt'});
+    document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500); });
+  box.appendChild(card);
+}
+
+/* ---------- 경고 ---------- */
+function renderWarns(){
+  const k=[], s=[], d=[];
+  if(state.purpose==='bgm' && state.vocal==='vocal') k.push(['info','영상 배경음악에 노래가 들어가면 대사와 겹칠 수 있어요. 대사가 있는 영상이면 "연주곡"이나 "허밍만"이 좋아요.']);
+  if(state.photo && !T(state.photoDesc)) k.push(['info','그림 설명을 짧게 적어 두면 어떤 그림을 올릴지 헷갈리지 않아요.']);
+  if(!T(state.theme) && !T(state.story)) s.push(['warn','주제나 이야기를 한 줄이라도 적어 주세요. 비어 있으면 평범한 곡이 나오기 쉬워요.']);
+  if(sung() && state.lyricsMode==='mine'){
+    const len=T(state.lyrics).replace(/\[[^\]]*\]/g,'').replace(/\s+/g,'').length;
+    if(!len) s.push(['warn','가사를 적어 주세요. 비워 두면 Gemini가 직접 써요.']);
+    else if(len > state.length*2.2) s.push(['warn',`가사가 ${lenText('ko')}에 비해 길어요. 다 부르지 못하고 잘릴 수 있으니 후렴만 남기거나 길이를 늘려 보세요.`]);
+    if(len && !/\[[^\]]+\]/.test(state.lyrics)) s.push(['info','가사 위의 "＋ 이야기", "＋ 후렴" 버튼으로 칸을 나눠 주면 어디를 후렴으로 부를지 더 잘 알아들어요.']);
+  }
+  if(/처럼|같은 느낌|스타일로/.test(state.story+state.genreCustom+state.moodCustom)) s.push(['info','특정 가수나 노래 이름을 넣으면 만들어지지 않을 수 있어요. 장르·악기·분위기로 바꿔 적어 보세요.']);
+  const n=state.instruments.length+(T(state.instCustom)?1:0);
+  if(n===0 && state.vocal!=='vocal') d.push(['warn','악기를 하나 이상 골라 주세요.']);
+  if(n>4) d.push(['info','악기가 많으면 소리가 복잡해져요. 2~3개가 가장 잘 어울려요.']);
+  if(state.genre==='piano' && state.instruments.some(i=>i!=='piano')) d.push(['info','장르가 "피아노 솔로"인데 다른 악기도 골랐어요. 여러 악기를 쓰려면 다른 장르가 더 잘 맞아요.']);
+  if(state.tempo==='fast' && ['moving','nostal','calm'].includes(state.mood)) d.push(['info',`'빠르게'와 '${byId(MOODS,state.mood).ko}' 분위기는 잘 안 어울릴 수 있어요. 느린 빠르기가 더 자연스러워요.`]);
+  if(['vslow','slow'].includes(state.tempo) && state.mood==='cheer') d.push(['info',"'경쾌한' 분위기에는 '보통'이나 '빠르게'가 더 잘 어울려요."]);
+  if(state.genre==='gugak' && !state.instruments.some(i=>['gayageum','haegeum','daegeum'].includes(i))) d.push(['info','국악 퓨전이면 가야금·해금·대금 중 하나를 함께 고르면 더 잘 살아나요.']);
+  notes($id('m-kind-notes'),k); notes($id('m-story-notes'),s); notes($id('m-sound-notes'),d);
+}
+
+/* ---------- ⑤ 어색할 때 ---------- */
+const PROBLEMS=[
+  {id:'fast',ko:'너무 빨라요',t:()=>'곡이 너무 빨라. 지금보다 느린 빠르기로, 더 차분하게 다시 만들어 줘.'},
+  {id:'busy',ko:'너무 화려해요',t:()=>'악기가 너무 많고 화려해. 악기 수를 줄이고 '+(instList('ko').slice(0,2).join(', ')||'피아노')+' 중심으로 단순하게 다시 만들어 줘.'},
+  {id:'mood',ko:'분위기가 달라요',t:()=>'분위기가 생각과 달라. 더 '+custom(MOODS,'mood').kp+' 느낌으로 바꿔 줘.'},
+  {id:'voiceIn',ko:'연주곡인데 목소리가 나와요',t:()=>'목소리 없이 악기 연주만으로 다시 만들어 줘.'},
+  {id:'pron',ko:'가사 발음이 이상해요',t:()=>'가사 발음이 어색해. 발음이 또렷하게 들리도록 가사를 더 짧고 쉬운 말로 바꿔서 다시 불러 줘.'},
+  {id:'lyric',ko:'가사가 마음에 안 들어요',t:()=>'가사를 다시 써 줘. 더 쉬운 말로, 후렴은 한 번 들으면 기억나게.'+(T(state.hook)?` 후렴에는 "${T(state.hook)}"를 꼭 넣어 줘.`:'')},
+  {id:'voice',ko:'목소리를 바꾸고 싶어요',t:()=>'목소리를 바꿔서 다시 불러 줘. '+(state.voice==='male'?'여성':'남성')+' 목소리로, 더 부드러운 음색이면 좋겠어.'},
+  {id:'end',ko:'끝이 뚝 끊겨요',t:()=>'끝이 갑자기 끊겨. 마지막이 천천히 작아지며 자연스럽게 끝나도록 다시 만들어 줘.'},
+  {id:'loud',ko:'처음부터 너무 커요',t:()=>'처음부터 소리가 너무 커. 앞부분은 조용하게 시작해서 천천히 커지도록 바꿔 줘.'}
+];
+function renderFix(){
+  const c=$id('m-fix-card'); c.innerHTML='';
+  const row=el('div',{class:'chips'});
+  PROBLEMS.forEach(p=>{ const b=chipBtn({ko:p.ko},state.fix.includes(p.id));
+    b.addEventListener('click',()=>{ const i=state.fix.indexOf(p.id); if(i>=0) state.fix.splice(i,1); else state.fix.push(p.id); b.setAttribute('aria-pressed',String(i<0)); update(); });
+    row.appendChild(b); });
+  c.appendChild(field('어떤 문제인가요?','여러 개 고를 수 있어요',row));
+  const pre=el('pre',{id:'m-fix-text'});
+  c.appendChild(el('div',{class:'pbox fix-out hidden',id:'m-fix-box'},[el('div',{class:'pbox-head'},[el('strong',{text:'Gemini에 보낼 문장'}),el('span',{class:'spacer'}),el('button',{type:'button',class:'btn small',text:'복사',onclick(){ VM.copy(pre.textContent); }})]),pre]));
+  c.appendChild(el('div',{class:'notes',id:'m-fix-notes'}));
+}
+function updateFix(){
+  const box=$id('m-fix-box'); if(!box) return;
+  const ps=PROBLEMS.filter(p=>state.fix.includes(p.id));
+  box.classList.toggle('hidden',!ps.length);
+  $id('m-fix-text').textContent='방금 만든 음악을 고쳐 줘.\n'+ps.map(p=>'- '+p.t()).join('\n')+'\n말한 부분만 고치고, 나머지(장르, 악기, 분위기)는 지금처럼 유지해 줘.';
+  notes($id('m-fix-notes'),ps.length>2?[['info','한 번에 한두 가지만 고치는 게 더 잘 돼요.']]:[]);
+}
+
+/* ---------- 예시 ---------- */
+const EXAMPLES=[
+  {name:'🎬 영상 배경음악',data:{purpose:'bgm',vocal:'inst',title:'',theme:'교직에 남는 순간',story:'모두 하교한 노을 진 교실에서 선생님이 학생이 남긴 쪽지를 읽고 미소 짓는다',keywords:['교실 창가','손편지'],
+    genre:'classical',mood:'moving',instruments:['piano','cello'],tempo:'slow',flow:'build',length:30}},
+  {name:'🎤 나의 노래',data:{purpose:'song',vocal:'vocal',title:'그래도 나는 남았네',theme:'교직에 남는 순간',story:'첫 발령 날 떨리던 마음, 힘들어서 그만두고 싶던 밤, 졸업식 날 받은 손편지 한 장 덕분에 다시 교실로 돌아온 이야기',
+    keywords:['첫 발령','출석부','졸업식','손편지'],lyricsMode:'ai',hook:'그래도 나는 이 교실에 남았네',lang:'ko',genre:'ballad',mood:'warm',instruments:['piano','aguitar','strings'],voice:'female',tone:'soft',tempo:'slow',flow:'build',length:60}},
+  {name:'💿 국악 앨범곡',data:{purpose:'album',vocal:'hum',title:'분필 가루와 함께한 서른두 해',theme:'정년을 앞둔 선생님의 교직 인생',story:'봄마다 새 아이들을 맞이하고, 겨울마다 떠나보낸 서른두 번의 계절',
+    keywords:['분필','칠판','벚꽃','마지막 수업'],genre:'gugak',mood:'nostal',instruments:['gayageum','haegeum','piano'],voice:'female',tone:'warmlow',tempo:'vslow',flow:'climaxfade',length:60,photo:true,photoDesc:'노을 진 교정을 걸어가는 선생님 뒷모습 (앨범 커버)'}}
+];
+
+/* ---------- 다른 메이커에서 불러오기 ---------- */
+const VIDEO_MOOD={calm:'calm',warm:'warm',moving:'moving',hope:'hope',melan:'nostal',fresh:'flutter'};
+const PHOTO_MOOD={'따뜻한':'warm','설레는':'flutter','뭉클한':'moving','정겨운':'nostal','희망찬':'hope','차분한':'calm'};
+function fromVideo(sum){
+  state.purpose='bgm';
+  state.vocal = sum.hasDialogue ? 'inst' : (state.vocal==='vocal'?'inst':state.vocal);
+  state.length = sum.seconds<=30?30:sum.seconds<=60?60:120;
+  if(VIDEO_MOOD[sum.moodId]) state.mood=VIDEO_MOOD[sum.moodId]; else { state.mood=CUSTOM; state.moodCustom=sum.moodText; }
+  if(T(sum.story)) state.story=sum.story;
+  renderAll(); update();
+}
+function fromCover(d){
+  state.purpose='album'; if(state.vocal==='inst') state.vocal='vocal';
+  if(d.title) state.title=d.title;
+  if(d.mood){ if(PHOTO_MOOD[d.mood]) state.mood=PHOTO_MOOD[d.mood]; else { state.mood=CUSTOM; state.moodCustom=d.mood; } }
+  state.photo=true; state.photoDesc=d.photoDesc||state.photoDesc;
+  renderAll(); update();
+}
+window.MusicMaker={fromVideo,fromCover};
+
+/* ---------- 갱신 ---------- */
+let outT;
+function update(){ save(); renderWarns(); clearTimeout(outT); outT=setTimeout(()=>{ renderSongCard(); renderOutput(); updateFix(); },120); }
+function renderAll(){ renderKind(); renderStory(); renderSound(); renderFix(); renderWarns(); renderSongCard(); renderOutput(); updateFix(); }
+renderAll();
+})();
+
 /* ===================== 화면 전환 ===================== */
 (function(){
-  const VIEWS={home:'Gemini 프롬프트 메이커',photo:'사진 프롬프트 메이커',video:'동영상 프롬프트 메이커'};
+  const VIEWS={home:'Gemini 프롬프트 메이커',photo:'사진 프롬프트 메이커',music:'음악 프롬프트 메이커',video:'동영상 프롬프트 메이커'};
   function show(v){
     v=VIEWS[v]?v:'home';
     Object.keys(VIEWS).forEach(k=>{ document.getElementById('view-'+k).hidden = k!==v; });
