@@ -474,7 +474,8 @@ footer{margin-top:48px;color:var(--muted);font-size:13px;text-align:center}
         <input type="text" class="custom-in hidden" id="c-styleCustom" placeholder="예: 90년대 홈비디오 느낌, 따뜻한 색감의 VHS 화질"></div>
       <div class="field"><span class="label">전체 분위기</span><div class="chips" id="c-mood"></div>
         <input type="text" class="custom-in hidden" id="c-moodCustom" placeholder="예: 담담하지만 마음 한구석이 뭉클한"></div>
-      <div class="field"><span class="label">배경음악 <span class="sub">음악 시간에 만든 곡을 나중에 입힐 거라면 '없음'</span></span><div class="chips" id="c-music"></div></div>
+      <div class="field"><span class="label">배경음악 <span class="sub">음악 시간에 만든 곡을 나중에 입힐 거라면 '없음'</span></span><div class="chips" id="c-music"></div>
+        <input type="text" class="custom-in hidden" id="c-musicCustom" placeholder="예: 오르골로 연주하는 잔잔한 자장가"></div>
       <div class="field"><span class="label">한 장면 길이 <span class="sub">Gemini가 한 번에 만들어 주는 길이에 맞춰 주세요</span></span><div class="chips" id="c-len"></div></div>
     </div>
   </section>
@@ -610,6 +611,7 @@ const ICON = {
   dollyzoom: frame(`${person(24,19,.4)}<line x1="12" y1="4" x2="12" y2="32" stroke="currentColor" opacity=".35"/><line x1="36" y1="4" x2="36" y2="32" stroke="currentColor" opacity=".35"/>${arrow(10,10,4,10,1.4)}${arrow(38,10,44,10,1.4)}${arrow(24,34,24,29,1.2)}`),
   whip: frame(`${person(30,17,.36,.35)}<g stroke="currentColor" opacity=".45" stroke-width="1.2" stroke-linecap="round"><line x1="6" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="22" y2="18"/><line x1="8" y1="24" x2="20" y2="24"/></g>${arrow(6,31,43,31,2.2)}`),
   fpv: frame(`<path d="M6,32 Q12,14 24,16 T42,6" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="2 2"/>${arrow(37,9,42,6,1.6)}<g fill="var(--accent)"><rect x="3" y="27" width="8" height="2" rx="1"/><circle cx="3.5" cy="26.5" r="2"/><circle cx="10.5" cy="26.5" r="2"/></g><rect x="20" y="4" width="10" height="8" fill="none" stroke="currentColor" opacity=".35"/>`),
+  custom: frame(`<g fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14,27 L15.5,21 L30,6.5 L34.5,11 L20,25.5 Z"/><line x1="27.5" y1="9" x2="32" y2="13.5"/><line x1="12" y1="30" x2="36" y2="30"/></g>`),
   handheld: frame(`${person(24,17,.36,.5)}<path d="M6,30 q4,-5 8,0 t8,0 t8,0 t8,0 t4,-2" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/>`)
 };
 
@@ -660,7 +662,7 @@ const TRANS = [
 ];
 // 막연한 표현: AI가 구체적인 연출로 옮기기 어려운 말
 const VAGUE = /(감성|세련|멋있|멋지게|예쁘게|이쁘게|고급스럽|퀄리티|느낌 ?있|분위기 ?있|간지|힙하게|있어 ?보이)/;
-const hasSpeed = id=>!byId(MOVES,id).noSpeed;
+const hasSpeed = id=>id==='custom' || !byId(MOVES,id).noSpeed;
 // 느낌 → 연출 묶음 (고르면 카메라 설정이 한 번에 채워짐)
 const FEELS = [
   {id:'moving',ko:'🥹 뭉클하게',set:{shot:'cu',angle:'eye',move:'pushin',speed:'slow',focus:'shallow'}},
@@ -750,13 +752,19 @@ const PROBLEMS = [
   {id:'extra',ko:'없던 사람·물건이 생김',t:'앞 영상에 없던 사람이나 물건이 새로 나타나지 않게 다시 만들어 줘.'}
 ];
 const byId = (arr,id)=>arr.find(o=>o.id===id) || arr[0];
+// 직접 입력: obj[key]가 'custom'이면 obj[key+'Custom']에 적은 글을 선택지처럼 씀 (비어 있으면 fb 선택지)
+function opt(arr,obj,key,fb){
+  if(obj[key]!=='custom') return byId(arr,obj[key]);
+  const t=clean(obj[key+'Custom']);
+  return t ? {id:'custom',ko:t,en:t,kp:t,term:t} : byId(arr,fb);
+}
 
 /* ---------- 상태 ---------- */
 const KEY='sb-prompt-maker-v1';
 const CUT_KEYS=['feel','shot','angle','move','speed','focus','trans','action','emotion','speaker','line','sfx','dur'];
 const MAX_CUTS=3, MIN_CUT=2;
 function defWiz(){ return {b1:'',b2:'',b3:'',b4:'',n:4}; }
-function defCommon(){ return {photo:true,photoDesc:'',who:'',look:'',others:'',place:'',light:'golden',style:'film',mood:'warm',music:'none',len:10,lightCustom:'',styleCustom:'',moodCustom:''}; }
+function defCommon(){ return {photo:true,photoDesc:'',who:'',look:'',others:'',place:'',light:'golden',style:'film',mood:'warm',music:'none',len:10,lightCustom:'',styleCustom:'',moodCustom:'',musicCustom:''}; }
 function defCut(shot){ return {dur:0,feel:'',shot:shot||'ms',angle:'eye',move:'static',speed:'slow',focus:'',trans:'cut',action:'',emotion:'',speaker:'',line:'',sfx:''}; }
 function defScene(i){ return {link:'continue',place:'',light:'',endState:'',cuts:[defCut(i===0?'photo':'ms')]}; }
 // 예전 저장 형식(장면 = 컷 1개)도 읽을 수 있게 변환
@@ -846,14 +854,13 @@ function renderCommon(){
   $('#c-photo').checked=c.photo;
   $('#photo-desc-field').classList.toggle('hidden',!c.photo);
   ['photoDesc','who','look','others','place'].forEach(k=>{ $('#c-'+k).value=c[k]; });
-  [['light',LIGHTS],['style',STYLES],['mood',MOODS]].forEach(([k,arr])=>{
+  [['light',LIGHTS],['style',STYLES],['mood',MOODS],['music',MUSICS]].forEach(([k,arr])=>{
     const inp=$('#c-'+k+'Custom'); inp.value=c[k+'Custom']||''; inp.classList.toggle('hidden',c[k]!=='custom');
     chipGroup($('#c-'+k),[...arr,CUSTOM],c[k],v=>{c[k]=v;inp.classList.toggle('hidden',v!=='custom');if(v==='custom')inp.focus();changed();});
   });
-  chipGroup($('#c-music'),MUSICS,c.music,v=>{c.music=v;changed();});
   chipGroup($('#c-len'),LENS,c.len,v=>{c.len=v;state.scenes.forEach(s=>fitDurs(s,v));renderScenes();changed();});
 }
-['photoDesc','who','look','others','place','lightCustom','styleCustom','moodCustom'].forEach(k=>{
+['photoDesc','who','look','others','place','lightCustom','styleCustom','moodCustom','musicCustom'].forEach(k=>{
   $('#c-'+k).addEventListener('input',e=>{ state.common[k]=e.target.value; const w=document.querySelector(`[data-wc="${k}"]`); if(w) w.value=e.target.value; changed(); });
 });
 $('#c-photo').addEventListener('change',e=>{
@@ -895,7 +902,8 @@ function sceneEditor(s,i){
     </div>
     <div class="grid2 field" data-g="override">
       <div data-g="placeWrap"><label>바뀐 장소</label><input type="text" data-sk="place" placeholder="예: 학교 앞 버스 정류장"></div>
-      <div><label>바뀐 시간대·빛 <span class="sub">(그대로면 비워 두기)</span></label><select data-sk="light"><option value="">기본 설정과 같게</option>${LIGHTS.map(l=>`<option value="${l.id}">${esc(l.ko)}</option>`).join('')}</select></div>
+      <div><label>바뀐 시간대·빛 <span class="sub">(그대로면 비워 두기)</span></label><select data-sk="light"><option value="">기본 설정과 같게</option>${LIGHTS.map(l=>`<option value="${l.id}">${esc(l.ko)}</option>`).join('')}<option value="custom">✏️ 직접 입력</option></select>
+        <input type="text" class="custom-in" data-sk="lightCustom" placeholder="예: 형광등이 하나씩 꺼지는 저녁"></div>
     </div>`:''}
     <div data-g="cuts"></div>
     <div class="row" style="margin-top:12px">
@@ -923,6 +931,11 @@ function sceneEditor(s,i){
       changed(i);
     });
   });
+  const lightSel=card.querySelector('[data-sk="light"]'), lightIn=card.querySelector('[data-sk="lightCustom"]');
+  if(lightSel){
+    const syncLight=()=>lightIn.classList.toggle('hidden',lightSel.value!=='custom');
+    syncLight(); lightSel.addEventListener('change',()=>{ syncLight(); if(lightSel.value==='custom') lightIn.focus(); });
+  }
   card.querySelectorAll(':scope > .scene-head [data-act], :scope > .row [data-act]').forEach(b=>b.addEventListener('click',()=>{
     const act=b.dataset.act;
     if(act==='split'){
@@ -972,7 +985,8 @@ function cutEditor(s,i,c,k){
       <p class="sub-title">🎭 내용</p>
       <div class="field"><label>무슨 일이 일어나나요? <span class="sub">${single?'행동 1~2개면 충분해요':'이 컷에서는 행동 1개'}</span></label>
         <textarea data-k="action" placeholder="${k>0?'예: 꽃다발을 꼭 쥔 선생님의 손':'예: 선생님이 교탁 앞에 서서 빈 책상들을 천천히 둘러본다'}"></textarea></div>
-      <div class="field"><label>표정·감정</label><select data-k="emotion">${EMOTIONS.map(o=>`<option value="${o.id}">${esc(o.ko)}</option>`).join('')}</select></div>
+      <div class="field"><label>표정·감정</label><select data-k="emotion">${EMOTIONS.map(o=>`<option value="${o.id}">${esc(o.ko)}</option>`).join('')}<option value="custom">✏️ 직접 입력</option></select>
+        <input type="text" class="custom-in" data-k="emotionCustom" placeholder="예: 웃고 있지만 눈가에 눈물이 맺힌"></div>
     </div>
     <div class="sub-group">
       <p class="sub-title">🔊 소리</p>
@@ -987,17 +1001,28 @@ function cutEditor(s,i,c,k){
   // 직접 고치면 '느낌' 선택은 풀림
   const manual=()=>{ if(c.feel){ c.feel=''; g('feel').querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed','false')); } };
   chipGroup(g('feel'),FEELS,c.feel,v=>{ const t=applyFeel(c,v); rerenderScene(i); changed(i); toast('카메라를 채웠어요: '+t); });
-  chipGroup(g('shot'),shots,c.shot,v=>{c.shot=v;manual();changed(i);},{icons:true});
-  chipGroup(g('angle'),ANGLES,c.angle,v=>{c.angle=v;manual();changed(i);},{icons:true});
-  chipGroup(g('move'),MOVES,c.move,v=>{c.move=v;manual();g('speedWrap').classList.toggle('hidden',!hasSpeed(v));changed(i);},{icons:true});
-  chipGroup(g('speed'),SPEEDS,c.speed,v=>{c.speed=v;manual();changed(i);});
+  // 선택지 + '✏️ 직접 입력' (고르면 바로 아래에 입력 칸이 열림)
+  const withCustom=(name,arr,key,cfg,ph,after)=>{
+    const row=g(name), inp=el('input',{type:'text',class:'custom-in',placeholder:ph});
+    inp.value=c[key+'Custom']||''; inp.classList.toggle('hidden',c[key]!=='custom');
+    inp.addEventListener('input',()=>{ c[key+'Custom']=inp.value; changed(i); });
+    row.after(inp);
+    chipGroup(row,[...arr,CUSTOM],c[key],v=>{ c[key]=v; inp.classList.toggle('hidden',v!=='custom'); if(v==='custom') inp.focus(); if(after) after(v); changed(i); },cfg);
+  };
+  withCustom('shot',shots,'shot',{icons:true},'예: 창문 너머로 보이는 인물, 어깨까지 보이게',manual);
+  withCustom('angle',ANGLES,'angle',{icons:true},'예: 책상 위 물건 높이에서, 문틈 사이로',manual);
+  withCustom('move',MOVES,'move',{icons:true},'예: 칠판을 따라 천천히 옆으로 이동',v=>{ manual(); g('speedWrap').classList.toggle('hidden',!hasSpeed(v)); });
+  withCustom('speed',SPEEDS,'speed',{},'예: 처음엔 느리다가 끝에서 조금 빨라지게',manual);
   g('speedWrap').classList.toggle('hidden',!hasSpeed(c.move));
-  chipGroup(g('focus'),FOCUSES,c.focus,v=>{c.focus=v;manual();changed(i);});
-  if(g('trans')) chipGroup(g('trans'),TRANS,c.trans,v=>{c.trans=v;changed(i);});
+  withCustom('focus',FOCUSES,'focus',{},'예: 칠판 글씨에서 선생님 얼굴로 초점 옮기기',manual);
+  if(g('trans')) withCustom('trans',TRANS,'trans',{},'예: 하얀 빛으로 번지며 넘어가기');
   box.querySelectorAll('[data-k]').forEach(inp=>{
     const key=inp.dataset.k; inp.value=c[key]||'';
     inp.addEventListener(inp.tagName==='SELECT'?'change':'input',()=>{ c[key]=inp.value; changed(i); });
   });
+  const emoSel=box.querySelector('[data-k="emotion"]'), emoIn=box.querySelector('[data-k="emotionCustom"]');
+  const syncEmo=()=>emoIn.classList.toggle('hidden',emoSel.value!=='custom');
+  syncEmo(); emoSel.addEventListener('change',()=>{ syncEmo(); if(emoSel.value==='custom') emoIn.focus(); });
   const dsel=box.querySelector('[data-dur]');
   if(dsel) dsel.addEventListener('change',()=>{ c.dur=+dsel.value; fitDurs(s,L); rerenderScene(i); changed(i); });
   const del=box.querySelector('[data-cact="del"]');
@@ -1026,7 +1051,7 @@ function warnings(i){
   const isPhoto = i===0 && state.common.photo;
   s.cuts.forEach((c,k)=>{
     const tag = n>1 ? `[컷 ${k+1}] ` : '';
-    const mv=byId(MOVES,c.move), sp=byId(SPEEDS,c.speed), big = mv.risky || (hasSpeed(c.move) && sp.risky);
+    const mv=opt(MOVES,c,'move','static'), sp=opt(SPEEDS,c,'speed','slow'), big = mv.risky || (hasSpeed(c.move) && sp.risky);
     if(!clean(c.action) && !(isPhoto && k===0 && c.shot==='photo' && n===1)) out.push(['warn',`${tag}"무슨 일이 일어나나요?"를 적어 주세요. 비어 있으면 AI가 마음대로 움직임을 만들어요.`]);
     if(big && k===n-1 && continues) out.push(['warn',`${tag}'${mv.risky?mv.ko:'빠르게'}'는 다음 장면으로 이어질 때 화면이 일그러지기 쉬워요. 마지막 장면에서만 쓰거나 '아주 천천히'로 바꿔 보세요.`]);
     else if(big) out.push(['info',`${tag}움직임이 큰 선택이에요. 손이나 얼굴이 일그러지면 더 차분하게 바꿔 보세요.`]);
@@ -1052,14 +1077,22 @@ function sceneCtx(i){
   const c=state.common, s=state.scenes[i], prev=state.scenes[i-1], next=state.scenes[i+1];
   const isPhoto = i===0 && c.photo;
   const isExt = i>0 && s.link!=='new';
-  const light = s.light ? byId(LIGHTS,s.light) : pick('light');
+  const light = s.light==='custom' ? opt(LIGHTS,s,'light',c.light) : s.light ? byId(LIGHTS,s.light) : pick('light');
   const place = (s.link==='new' && clean(s.place)) ? clean(s.place) : clean(c.place);
   const cuts = s.cuts.map((ct,k)=>{
     const shotId = (ct.shot==='photo' && !(isPhoto && k===0)) ? 'ms' : ct.shot;
-    return {ct, start:cutStart(s,k), shot:byId(SHOTS,shotId), angle:byId(ANGLES,ct.angle), move:byId(MOVES,ct.move), speed:byId(SPEEDS,ct.speed), focus:FOCUSES.find(f=>f.id && f.id===ct.focus), trans:byId(TRANS,ct.trans), emo:EMOTIONS.find(e=>e.id===ct.emotion)};
+    const focusT=clean(ct.focusCustom), emoT=clean(ct.emotionCustom);
+    return {ct, start:cutStart(s,k),
+      shot: shotId==='custom' ? opt(SHOTS,ct,'shot','ms') : byId(SHOTS,shotId),
+      angle:opt(ANGLES,ct,'angle','eye'), move:opt(MOVES,ct,'move','static'), speed:opt(SPEEDS,ct,'speed','slow'),
+      focus: ct.focus==='custom' ? (focusT?{id:'custom',term:focusT,en:`Focus: ${focusT}`,kp:`초점: ${focusT}`}:undefined) : FOCUSES.find(f=>f.id && f.id===ct.focus),
+      trans:opt(TRANS,ct,'trans','cut'),
+      emo: ct.emotion==='custom' ? (emoT?{id:'custom',ko:emoT,en:emoT,kp:emoT}:undefined) : EMOTIONS.find(e=>e.id===ct.emotion)};
   });
+  const musicT=clean(c.musicCustom);
   return {c,s,prev,next,isPhoto,isExt,light,place,cuts,
-    style:pick('style'), mood:pick('mood'), music:byId(MUSICS,c.music),
+    style:pick('style'), mood:pick('mood'),
+    music: c.music==='custom' ? (musicT?{en:`Background music: ${musicT}.`,kp:`배경음악: ${musicT}.`}:byId(MUSICS,'none')) : byId(MUSICS,c.music),
     nextContinues: !!(next && next.link!=='new'),
     framingChange: isExt && lastCut(prev).shot!==cuts[0].ct.shot};
 }
